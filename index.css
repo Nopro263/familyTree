@@ -1,0 +1,24 @@
+.element {
+    background-color: red;
+    display: block;
+
+    width: fit-content;
+    height: fit-content;
+
+    padding: 25px;
+
+    position: absolute;
+}
+
+.mainCanvas {
+    width: 100vw;
+    height: 100vh;
+    background-color: gray;
+
+    display: block;
+    position: relative;
+}
+
+.dragging {
+    background-color: green;
+}
