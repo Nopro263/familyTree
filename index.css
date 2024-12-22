@@ -27,3 +27,10 @@
     background-color: yellow;
     position: absolute;
 }
+
+.mainCanvas > svg {
+    left: 0;
+    top: 0;
+    background-color: white;
+    position: absolute;
+}

@@ -9,6 +9,4 @@ a.innerHTML = "A";
 const b = createElement(canvas);
 b.innerHTML = "B";
 
-a.addEventListener("dragend", () => {
-    connectElements(canvas, a,b);
-})
+connectElements(canvas, a,b);

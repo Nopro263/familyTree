@@ -15,6 +15,17 @@ const setNewAbsolutePosition = (element, oldPos, newPos) => {
 }
 
 export const initCanvas = (canvas) => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    //svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute("width", window.innerWidth);
+    svg.setAttribute("height", window.innerHeight);
+    svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + window.innerHeight);
+    
+    console.log(svg)
+
+    canvas.appendChild(svg);
+
     canvas.addEventListener("dragover", (ev) => {
         ev.preventDefault(); // allow dropping
     });
@@ -58,29 +69,34 @@ export const createElement = (canvas) => {
     return element;
 }
 
+
 export const connectElements = (canvas, element1, element2) => {
-    const upperLeftElement = getVal(element1.style.left) < getVal(element2.style.left) ? element1 : element2;
-    const lowerRightElement = getVal(element1.style.left) >= getVal(element2.style.left) ? element1 : element2;
+    const svg = canvas.querySelector("svg");
 
-    console.log(upperLeftElement, lowerRightElement);
+    // variable for the namespace 
+    const svgns = "http://www.w3.org/2000/svg";
 
-    const _dx = getVal(lowerRightElement.style.left) - getVal(upperLeftElement.style.left) - upperLeftElement.offsetWidth;
-    const _dy = getVal(lowerRightElement.style.top) - getVal(upperLeftElement.style.top) - upperLeftElement.offsetHeight;
+    // make a simple rectangle
+    let newRect = document.createElementNS(svgns, "line");
 
-    const dx = Math.abs(_dx);
-    const dy = Math.abs(_dy);
-    const flipx = _dx != dx;
-    const flipy = _dy != dy;
+    
 
-    const element = document.createElement("div");
-    element.classList.add("line");
+    const updatePos = () => {
+        newRect.setAttribute("x1", getVal(element1.style.left) + element1.offsetWidth / 2);
+        newRect.setAttribute("y1", getVal(element1.style.top) + element1.offsetHeight / 2);
+        newRect.setAttribute("x2", getVal(element2.style.left) + element2.offsetWidth / 2);
+        newRect.setAttribute("y2", getVal(element2.style.top) + element2.offsetHeight / 2);
+    }
+    
+    updatePos();
 
-    element.style.width = `${dx}px`;
-    element.style.height = `${dy}px`;
-    element.style.left = `${getVal(upperLeftElement.style.left) + upperLeftElement.offsetWidth}px`;
-    element.style.top = `${getVal(upperLeftElement.style.top) + upperLeftElement.offsetHeight}px`;
+    element1.addEventListener("dragend", updatePos);
+    element2.addEventListener("dragend", updatePos);
 
-    element.style.transform = `scale(${flipx ? -1 : 1}, ${flipy ? -1 : 1}) translate(${flipx ? dx : 0}px, ${flipy ? dy : 0}px)`;
+    newRect.setAttribute("stroke", "#5cceee");
 
-    canvas.appendChild(element);
+    
+
+    // append the new rectangle to the svg
+    svg.appendChild(newRect);
 }
