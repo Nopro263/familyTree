@@ -6,10 +6,39 @@ document.querySelector(".arrow").addEventListener("click", () => {
 
 callbacks.createElement = (element, node) => {
     element.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth || "?"} - ${node.death || "now"}</p>`;
+    element.addEventListener("click", () => {
+        startEdit(node);
+        element.classList.add("active");
+        document.querySelector(".sidebar").classList.add("open");
+    });
 }
 
 callbacks.createRelationship = (element, relationship) => {
     element.innerHTML = relationship.type;
+
+    element.addEventListener("click", () => {
+        startRelationshipEdit(relationship);
+        element.classList.add("active");
+        document.querySelector(".sidebar").classList.add("open");
+    });
+}
+
+const startEdit = (node) => {
+    document.querySelectorAll(".active").forEach((v) => {
+        v.classList.remove("active");
+    });
+
+    const sidebar = document.querySelector(".sidebar .content");
+    sidebar.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth || "?"} - ${node.death || "now"}</p>`;
+}
+
+const startRelationshipEdit = (node) => {
+    document.querySelectorAll(".active").forEach((v) => {
+        v.classList.remove("active");
+    });
+
+    const sidebar = document.querySelector(".sidebar .content");
+    sidebar.innerHTML = `<h1>${node.type}</h1><p>${node.start || "?"} - ${node.end || "now"}</p>`;
 }
 
 const tree = createTree(".mainCanvas");

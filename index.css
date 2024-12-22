@@ -109,10 +109,6 @@ main > * {
     background-color: white;
 }
 
-.element.active {
-    border-color: var(--blue);
-}
-
 .element > h1 {
     margin: 0;
 }
@@ -189,4 +185,8 @@ main > * {
 
 .dragging {
     opacity: 0.5;
+}
+
+.active {
+    border-color: var(--blue);
 }
