@@ -1,5 +1,9 @@
 import { createTree, createNode, addChildren, addRelationship, callbacks, reorderElements, getNodeById } from "./tree.js";
 
+document.querySelector(".arrow").addEventListener("click", () => {
+    document.querySelector(".sidebar").classList.toggle("open");
+});
+
 callbacks.createElement = (element, node) => {
     element.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth || "?"} - ${node.death || "now"}</p>`;
 }

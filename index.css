@@ -2,9 +2,94 @@
     --blue: #219ebc;
 }
 
-html {
+html,body {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
 }
+
+main {
+    position: relative;
+}
+
+main > * {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.sidebar {
+    z-index: 1;
+    background-color: white;
+    border-right-color: lightgrey;
+    border-bottom-right-radius: 10px;
+    border-right-style: solid;
+    border-right-width: 2px;
+    border-top-color: lightgrey;
+    border-top-style: solid;
+    border-top-width: 2px;
+
+    height: 100%;
+
+    transition: translate 100ms;
+}
+
+.sidebar:not(.open) {
+    translate: -100%;
+} 
+
+.arrow {
+    position: absolute;
+
+    --size: 3em;
+
+    right: calc(-1 * var(--size) - 2 * 2px);
+    top: -2px;
+
+    background-color: white;
+    border-right-width: 2px;
+    border-right-style: solid;
+    border-right-color: lightgrey;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    border-top-width: 2px;
+    border-top-style: solid;
+    border-top-color: lightgrey;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: lightgrey;
+
+    width: var(--size);
+    height: var(--size);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow > svg {
+    width: 75%;
+    height: 75%;
+
+    transition: rotate 100ms;
+}
+
+.sidebar.open .arrow > svg {
+    rotate: 180deg;
+}
+
+/*.arrow::after {
+    content: "";
+    position: absolute;
+  
+    background-color: transparent;
+    bottom: -52px;
+    left: 0;
+    height: 50px;
+    width: 25px;
+    border-top-left-radius: 10px;
+    box-shadow: -2px -2px 0 0 lightgrey; 
+}*/
 
 .element {
     display: block;
