@@ -77,26 +77,68 @@ export const connectElements = (canvas, element1, element2) => {
     const svgns = "http://www.w3.org/2000/svg";
 
     // make a simple rectangle
-    let newRect = document.createElementNS(svgns, "line");
+    let line1 = document.createElementNS(svgns, "line");
+    let line2 = document.createElementNS(svgns, "line");
 
-    
+
+
+    const element = document.createElement("div");
+
+    element.id = `LINE_${element1.id}_${element2.id}`
+    element.draggable = true;
+    element.classList.add("line");
+
+    element.addEventListener("dragstart" , (ev) => {
+        ev.dataTransfer.setData("text", ev.target.id);
+        ev.target.classList.add("dragging");
+
+        dragData[ev.target.id] = {
+            "clientX": ev.clientX,
+            "clientY": ev.clientY,
+        }
+    });
+
+    element.addEventListener("dragend" , (ev) => {
+        ev.target.classList.remove("dragging");
+    });
+
+    canvas.appendChild(element);
+
+
 
     const updatePos = () => {
-        newRect.setAttribute("x1", getVal(element1.style.left) + element1.offsetWidth / 2);
-        newRect.setAttribute("y1", getVal(element1.style.top) + element1.offsetHeight / 2);
-        newRect.setAttribute("x2", getVal(element2.style.left) + element2.offsetWidth / 2);
-        newRect.setAttribute("y2", getVal(element2.style.top) + element2.offsetHeight / 2);
+
+        element.style.left = `${(getVal(element1.style.left) + element1.offsetWidth / 2 + getVal(element2.style.left) + element2.offsetWidth / 2 ) / 2 - element.offsetWidth}px`;
+        element.style.top = `${(getVal(element1.style.top) + element1.offsetHeight / 2 + getVal(element2.style.top) + element2.offsetHeight / 2 ) / 2 - element.offsetHeight}px`;
+
+        updateOtherPos();
+    }
+
+    const updateOtherPos = () => {
+        line1.setAttribute("x1", getVal(element1.style.left) + element1.offsetWidth / 2);
+        line1.setAttribute("y1", getVal(element1.style.top) + element1.offsetHeight / 2);
+        line1.setAttribute("x2", getVal(element.style.left) + element.offsetWidth / 2);
+        line1.setAttribute("y2", getVal(element.style.top) + element.offsetHeight / 2);
+
+        line2.setAttribute("x1", getVal(element.style.left) + element.offsetWidth / 2);
+        line2.setAttribute("y1", getVal(element.style.top) + element.offsetHeight / 2);
+        line2.setAttribute("x2", getVal(element2.style.left) + element2.offsetWidth / 2);
+        line2.setAttribute("y2", getVal(element2.style.top) + element2.offsetHeight / 2);
     }
     
     updatePos();
 
     element1.addEventListener("dragend", updatePos);
     element2.addEventListener("dragend", updatePos);
+    element.addEventListener("dragend", updateOtherPos);
 
-    newRect.setAttribute("stroke", "#5cceee");
+    line1.setAttribute("stroke", "#5cceee");
+    line2.setAttribute("stroke", "#5cceee");
 
     
 
-    // append the new rectangle to the svg
-    svg.appendChild(newRect);
+    svg.appendChild(line1);
+    svg.appendChild(line2);
+
+    return element;
 }

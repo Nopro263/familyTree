@@ -9,4 +9,5 @@ a.innerHTML = "A";
 const b = createElement(canvas);
 b.innerHTML = "B";
 
-connectElements(canvas, a,b);
+const line_ab = connectElements(canvas, a,b);
+line_ab.innerHTML = "⚭";

@@ -19,12 +19,10 @@
     position: relative;
 }
 
-.dragging {
-    background-color: green;
-}
-
 .line {
     background-color: yellow;
+    width: fit-content;
+    height: fit-content;
     position: absolute;
 }
 
@@ -33,4 +31,8 @@
     top: 0;
     background-color: white;
     position: absolute;
+}
+
+.dragging {
+    background-color: green;
 }
