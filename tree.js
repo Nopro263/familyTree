@@ -1,4 +1,4 @@
-import { connectElements, createElement, initCanvas } from "./canvas.js";
+import { connectElements, createElement, initCanvas, connectDirect } from "./canvas.js";
 
 let nodeId = 0;
 let relationshipId = 0;
@@ -51,6 +51,8 @@ export const addRelationship = (tree, node1Id, node2Id) => {
 export const addChildren = (tree, relationshipId, nodeId) => {
     const relationship = _getRelationship(tree, relationshipId);
     relationship.children.push(nodeId);
+
+    connectDirect(tree.canvas, relationship.element, _getNode(tree, nodeId).element);
 }
 
 const _getRelationship = (tree, id) => {

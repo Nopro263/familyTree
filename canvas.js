@@ -73,10 +73,8 @@ export const createElement = (canvas) => {
 export const connectElements = (canvas, element1, element2) => {
     const svg = canvas.querySelector("svg");
 
-    // variable for the namespace 
     const svgns = "http://www.w3.org/2000/svg";
 
-    // make a simple rectangle
     let line1 = document.createElementNS(svgns, "line");
     let line2 = document.createElementNS(svgns, "line");
 
@@ -111,6 +109,8 @@ export const connectElements = (canvas, element1, element2) => {
         element.style.left = `${(getVal(element1.style.left) + element1.offsetWidth / 2 + getVal(element2.style.left) + element2.offsetWidth / 2 ) / 2 - element.offsetWidth}px`;
         element.style.top = `${(getVal(element1.style.top) + element1.offsetHeight / 2 + getVal(element2.style.top) + element2.offsetHeight / 2 ) / 2 - element.offsetHeight}px`;
 
+        element.dispatchEvent(new DragEvent("dragend"));
+        
         updateOtherPos();
     }
 
@@ -141,4 +141,26 @@ export const connectElements = (canvas, element1, element2) => {
     svg.appendChild(line2);
 
     return element;
+}
+
+export const connectDirect = (canvas, element1, element2) => {
+    const svg = canvas.querySelector("svg");
+
+    const svgns = "http://www.w3.org/2000/svg";
+
+    let line = document.createElementNS(svgns, "line");
+
+    const updatePos = () => {
+        line.setAttribute("x1", getVal(element1.style.left) + element1.offsetWidth / 2);
+        line.setAttribute("y1", getVal(element1.style.top) + element1.offsetHeight / 2);
+        line.setAttribute("x2", getVal(element2.style.left) + element2.offsetWidth / 2);
+        line.setAttribute("y2", getVal(element2.style.top) + element2.offsetHeight / 2);
+    }
+
+    element1.addEventListener("dragend", updatePos);
+    element2.addEventListener("dragend", updatePos);
+
+    line.setAttribute("stroke", "#5cceee");
+
+    svg.appendChild(line);
 }
