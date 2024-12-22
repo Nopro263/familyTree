@@ -3,6 +3,11 @@ import { connectElements, createElement, initCanvas, connectDirect } from "./can
 let nodeId = 0;
 let relationshipId = 0;
 
+export const callbacks = {
+    "createElement": (element, node) => {element.innerHTML = node.firstname},
+    "createRelationship": (element, relationship) => {element.innerHTML = "+"}
+}
+
 export const createTree = (selector) => {
     const canvas = document.querySelector(selector);
 
@@ -15,34 +20,42 @@ export const createTree = (selector) => {
     }
 }
 
-export const createNode = (tree, name) => {
+export const createNode = (tree, firstname, lastname, birth, death) => {
     const element = createElement(tree.canvas);
 
-    element.innerHTML = name;
-
     const node = {
-        "name": name,
+        "firstname": firstname,
+        "lastname": lastname,
+        "birth": birth,
+        "death": death,
         "id": nodeId++,
         "element": element
     }
+
+    callbacks.createElement(element, node);
 
     tree.nodes.push(node);
     return node;
 }
 
-export const addRelationship = (tree, node1Id, node2Id) => {
+export const addRelationship = (tree, node1Id, node2Id, start, end, type) => {
     const node1 = _getNode(tree, node1Id);
     const node2 = _getNode(tree, node2Id);
 
     const element = connectElements(tree.canvas, node1.element, node2.element);
-    element.innerHTML = "+";
+    
 
     const relationship = {
         "nodes": [node1Id, node2Id],
+        "start": start,
+        "end": end,
+        "type": type,
         "id": relationshipId++,
         "children": [],
         "element": element
     }
+
+    callbacks.createRelationship(element, relationship);
 
     tree.relationships.push(relationship);
     return relationship;
