@@ -164,3 +164,11 @@ export const connectDirect = (canvas, element1, element2) => {
 
     svg.appendChild(line);
 }
+
+export const setPosition = (element, position) => {
+
+    element.style.left = `${position[0]}px`;
+    element.style.top = `${position[1]}px`;
+
+    element.dispatchEvent(new DragEvent("dragend"));
+}

@@ -1,4 +1,4 @@
-import { connectElements, createElement, initCanvas, connectDirect } from "./canvas.js";
+import { connectElements, createElement, initCanvas, connectDirect, setPosition } from "./canvas.js";
 
 let nodeId = 0;
 let relationshipId = 0;
@@ -39,8 +39,8 @@ export const createNode = (tree, firstname, lastname, birth, death) => {
 }
 
 export const addRelationship = (tree, node1Id, node2Id, start, end, type) => {
-    const node1 = _getNode(tree, node1Id);
-    const node2 = _getNode(tree, node2Id);
+    const node1 = getNodeById(tree, node1Id);
+    const node2 = getNodeById(tree, node2Id);
 
     const element = connectElements(tree.canvas, node1.element, node2.element);
     
@@ -62,16 +62,57 @@ export const addRelationship = (tree, node1Id, node2Id, start, end, type) => {
 }
 
 export const addChildren = (tree, relationshipId, nodeId) => {
-    const relationship = _getRelationship(tree, relationshipId);
+    const relationship = getRelationshipById(tree, relationshipId);
     relationship.children.push(nodeId);
 
-    connectDirect(tree.canvas, relationship.element, _getNode(tree, nodeId).element);
+    connectDirect(tree.canvas, relationship.element, getNodeById(tree, nodeId).element);
 }
 
-const _getRelationship = (tree, id) => {
-    return tree.relationships.filter((v) => v.id === id)[0];
+export const reorderTree = (tree) => {
+    
 }
 
-const _getNode = (tree, id) => {
-    return tree.nodes.filter((v) => v.id === id)[0];
+export const reorderElements = (tree, array) => {
+    let y = getNodeById(tree, array[0]).element.offsetHeight + 10;
+    let x = 0;
+
+    for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+        const relationships = tree.relationships.filter(v => v.nodes.includes(element));
+        const relationship = relationships[0] // only first;
+
+        const otherNode = relationship.nodes.filter(v => v !== element)[0];
+        const otherIndex = array.indexOf(otherNode);
+
+        if(index+1 < array.length) {
+            if(array[index+1] == otherNode) {
+                continue;
+            }
+
+            array[otherIndex] = array[index+1];
+            array[index+1] = otherNode;
+        }
+
+        if(index-1 >= 0) {
+            if(array[index-1] == otherNode) {
+                continue;
+            }
+
+            array[otherIndex] = array[index-1];
+            array[index-1] = otherNode;
+        }
+    }
+
+    array.forEach(element => {
+        setPosition(getNodeById(tree, element).element, [x,y]);
+        x += getNodeById(tree, element).element.offsetWidth + 10;
+    });
+}
+
+export const getRelationshipById = (tree, id) => {
+    return (tree.relationships.filter((v) => v.id === id) || [undefined])[0];
+}
+
+export const getNodeById = (tree, id) => {
+    return (tree.nodes.filter((v) => v.id === id) || [undefined])[0];
 }
