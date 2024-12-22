@@ -22,3 +22,8 @@
 .dragging {
     background-color: green;
 }
+
+.line {
+    background-color: yellow;
+    position: absolute;
+}

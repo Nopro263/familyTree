@@ -2,13 +2,13 @@ let lastId = 0;
 
 const dragData = {};
 
+const getVal = (style) => {
+    return parseInt(style.substring(0, style.length - 2)) || 0;
+}
+
 const setNewAbsolutePosition = (element, oldPos, newPos) => {
     const dx = newPos.clientX - oldPos.clientX;
     const dy = newPos.clientY - oldPos.clientY;
-
-    const getVal = (style) => {
-        return parseInt(style.substring(0, style.length - 2)) || 0;
-    }
 
     element.style.left = `${ getVal(element.style.left) + dx }px`;
     element.style.top = `${ getVal(element.style.top) + dy }px`;
@@ -49,8 +49,6 @@ export const createElement = (canvas) => {
             "clientX": ev.clientX,
             "clientY": ev.clientY,
         }
-
-        console.log(ev);
     });
 
     element.addEventListener("dragend" , (ev) => {
@@ -58,4 +56,31 @@ export const createElement = (canvas) => {
     });
 
     return element;
+}
+
+export const connectElements = (canvas, element1, element2) => {
+    const upperLeftElement = getVal(element1.style.left) < getVal(element2.style.left) ? element1 : element2;
+    const lowerRightElement = getVal(element1.style.left) >= getVal(element2.style.left) ? element1 : element2;
+
+    console.log(upperLeftElement, lowerRightElement);
+
+    const _dx = getVal(lowerRightElement.style.left) - getVal(upperLeftElement.style.left) - upperLeftElement.offsetWidth;
+    const _dy = getVal(lowerRightElement.style.top) - getVal(upperLeftElement.style.top) - upperLeftElement.offsetHeight;
+
+    const dx = Math.abs(_dx);
+    const dy = Math.abs(_dy);
+    const flipx = _dx != dx;
+    const flipy = _dy != dy;
+
+    const element = document.createElement("div");
+    element.classList.add("line");
+
+    element.style.width = `${dx}px`;
+    element.style.height = `${dy}px`;
+    element.style.left = `${getVal(upperLeftElement.style.left) + upperLeftElement.offsetWidth}px`;
+    element.style.top = `${getVal(upperLeftElement.style.top) + upperLeftElement.offsetHeight}px`;
+
+    element.style.transform = `scale(${flipx ? -1 : 1}, ${flipy ? -1 : 1}) translate(${flipx ? dx : 0}px, ${flipy ? dy : 0}px)`;
+
+    canvas.appendChild(element);
 }
