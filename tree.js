@@ -26,8 +26,8 @@ export const createNode = (tree, firstname, lastname, birth, death) => {
     const node = {
         "firstname": firstname,
         "lastname": lastname,
-        "birth": birth,
-        "death": death,
+        "birth": birth ? new Date(birth) : null,
+        "death": death ? new Date(death) : null,
         "id": nodeId++,
         "element": element
     }
@@ -107,7 +107,7 @@ export const reorderTree = (tree) => {
     Object.keys(levelToNode).sort(function(a, b) {
         return parseInt(b) - parseInt(a);
       }).forEach((i) => {
-        x = 0;
+        x = levelToNode[i][0].element.offsetWidth * 2;
         for (const node of levelToNode[i]) {
             setPosition(node.element, [x,y]);
             x += node.element.offsetWidth + 50;

@@ -5,12 +5,14 @@ document.querySelector(".arrow").addEventListener("click", () => {
 });
 
 callbacks.createElement = (element, node) => {
-    element.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth || "?"} - ${node.death || "now"}</p>`;
-    element.addEventListener("click", () => {
+    element.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth ? node.birth.toLocaleDateString() : "?"} - ${node.death ? node.death.toLocaleDateString() : "now"}</p>`;
+    const l = () => {
         startEdit(node);
         element.classList.add("active");
         document.querySelector(".sidebar").classList.add("open");
-    });
+    };
+    element.addEventListener("click", l);
+    node.listener = l;
 }
 
 callbacks.createRelationship = (element, relationship) => {
@@ -29,7 +31,29 @@ const startEdit = (node) => {
     });
 
     const sidebar = document.querySelector(".sidebar .content");
-    sidebar.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth || "?"} - ${node.death || "now"}</p>`;
+    sidebar.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1>
+    <p>${node.birth ? node.birth.toLocaleDateString() : "?"} - ${node.death ? node.death.toLocaleDateString() : "now"}</p>
+    <div class="seperator"></div>
+    <div class="row"><label for="firstname">first name</label><input id="firstname" type="text" value="${node.firstname}"/></div>
+    <div class="row"><label for="lastname">last name</label><input id="lastname" type="text" value="${node.lastname}"/></div>
+    <div class="row"><label for="birth">born</label><input id="birth" type="date" value="${node.birth ? node.birth.toLocaleDateString('en-CA') : "?"}"/></div>
+    <div class="row"><label for="death">died</label><input type="checkbox" id="hasDied" ${node.death ? "checked" : ""}/><input id="death" type="date" value="${node.death ? node.death.toLocaleDateString('en-CA') : "now"}" ${node.death ? "" : "disabled"}/></div>
+    <button class="end" id="save">save</button>`;
+
+    sidebar.querySelector("#hasDied").addEventListener("change", (ev) => {
+        sidebar.querySelector("#death").disabled = !ev.target.checked;
+    });
+
+    sidebar.querySelector("#save").addEventListener("click", (ev) => {
+        node.firstname = sidebar.querySelector("#firstname").value;
+        node.lastname = sidebar.querySelector("#lastname").value;
+        node.birth = new Date(sidebar.querySelector("#birth").value);
+        node.death = sidebar.querySelector("#hasDied").checked ? new Date(sidebar.querySelector("#death").value) : null;
+
+        node.element.removeEventListener("click", node.l || null);
+
+        callbacks.createElement(node.element, node);
+    })
 }
 
 const startRelationshipEdit = (node) => {

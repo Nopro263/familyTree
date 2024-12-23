@@ -1,5 +1,6 @@
 :root {
     --blue: #219ebc;
+    --lightblue: #2FB8DA;
 }
 
 html,body {
@@ -190,4 +191,55 @@ main > * {
 
 .active {
     border-color: var(--blue);
+}
+
+.seperator {
+    height: 2px;
+    width: 100%;
+    background-color: lightgrey;
+}
+
+.row {
+    --margin: 0.5em;
+    width: calc(100% - var(--margin) * 2);
+    display: flex;
+
+    margin: var(--margin);
+    justify-content: space-between;
+}
+
+input,
+button {
+    border-radius: 5px;
+    border-color: lightgrey;
+    border-width: 2px;
+    border-style: solid;
+}
+
+button {
+    background-color: var(--lightblue);
+    border-color: var(--blue);
+    padding: 0.5em;
+    font-size: large;
+}
+
+button:active {
+    background-color: var(--blue);
+}
+
+input:disabled {
+    border-color: hsl(0, 0%, 95%);
+}
+
+.end {
+    /*margin-top: auto;*/
+    margin-bottom: 0.5em;
+    margin-right: 0.5em;
+    align-self: flex-end;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
