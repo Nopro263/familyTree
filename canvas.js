@@ -106,8 +106,8 @@ export const connectElements = (canvas, element1, element2) => {
 
     const updatePos = () => {
 
-        element.style.left = `${(getVal(element1.style.left) + element1.offsetWidth / 2 + getVal(element2.style.left) + element2.offsetWidth / 2 ) / 2 - element.offsetWidth}px`;
-        element.style.top = `${(getVal(element1.style.top) + element1.offsetHeight / 2 + getVal(element2.style.top) + element2.offsetHeight / 2 ) / 2 - element.offsetHeight}px`;
+        element.style.left = `${(getVal(element1.style.left) + element1.offsetWidth / 2 + getVal(element2.style.left) + element2.offsetWidth / 2 ) / 2 - element.offsetWidth / 2}px`;
+        element.style.top = `${(getVal(element1.style.top) + element1.offsetHeight / 2 + getVal(element2.style.top) + element2.offsetHeight / 2 ) / 2 - element.offsetHeight / 2}px`;
 
         element.dispatchEvent(new DragEvent("dragend"));
         
