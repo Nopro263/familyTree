@@ -69,49 +69,73 @@ export const addChildren = (tree, relationshipId, nodeId) => {
 }
 
 export const reorderTree = (tree) => {
-    
+    const levels = {}
+    let node = tree.nodes[0];
+    let nodeLevel = 0;
+
+    rt(tree, node, nodeLevel, levels);
+
+    return levels;
 }
 
-export const reorderElements = (tree, array) => {
-    let y = getNodeById(tree, array[0]).element.offsetHeight + 10;
-    let x = 0;
-
-    for (let index = 0; index < array.length; index++) {
-        const element = array[index];
-        const relationships = tree.relationships.filter(v => v.nodes.includes(element));
-        const relationship = relationships[0] // only first;
-
-        const otherNode = relationship.nodes.filter(v => v !== element)[0];
-        const otherIndex = array.indexOf(otherNode);
-
-        if(index+1 < array.length) {
-            if(array[index+1] == otherNode) {
-                continue;
+const rt = (tree, node, nodeLevel, levels) => {
+    const addAllInRelationships = (node) => {
+        getRelationshipsWithNodeId(tree, node.id).forEach(element => {
+            let otherNode = element.nodes.filter(v => v !== node.id)[0];
+            if(levels[otherNode]) {
+                console.log(otherNode, levels[otherNode], nodeLevel);
             }
+            levels[otherNode] = nodeLevel;
 
-            array[otherIndex] = array[index+1];
-            array[index+1] = otherNode;
-        }
+            console.log("all of spouse", otherNode)
+            addAllParents(getNodeById(tree, otherNode));
+            console.log("end")
 
-        if(index-1 >= 0) {
-            if(array[index-1] == otherNode) {
-                continue;
-            }
-
-            array[otherIndex] = array[index-1];
-            array[index-1] = otherNode;
-        }
+            element.children.forEach(child => {
+                if(levels[child] !== undefined) {
+                    return;
+                }
+                levels[child] = nodeLevel-1;
+                rt(tree, getNodeById(tree, child), nodeLevel-1, levels);
+            });
+        });
     }
 
-    array.forEach(element => {
-        setPosition(getNodeById(tree, element).element, [x,y]);
-        x += getNodeById(tree, element).element.offsetWidth + 10;
-    });
+    const addAllParents = (node) => {
+        getRelationshipsWithNodeIdAsChild(tree, node.id).forEach(element => {
+            element.nodes.forEach(parent => {
+                if(levels[parent]) {
+                    console.log(parent, levels[parent], nodeLevel+1);
+                }
+
+                levels[parent] = nodeLevel+1;
+                if(levels[parent] !== undefined) {
+                    return;
+                }
+                rt(tree, getNodeById(tree, parent), nodeLevel+1, levels);
+            });
+        });
+    }
+
+    if(levels[node.id]) {
+        console.log(node.id, levels[node.id], nodeLevel);
+    }
+    addAllInRelationships(node);
+    addAllParents(node);
 }
 
 export const getRelationshipById = (tree, id) => {
     return (tree.relationships.filter((v) => v.id === id) || [undefined])[0];
 }
+
+export const getRelationshipsWithNodeId = (tree, id) => {
+    return (tree.relationships.filter((v) => v.nodes.includes(id)) || []);
+}
+
+export const getRelationshipsWithNodeIdAsChild = (tree, id) => {
+    return (tree.relationships.filter((v) => v.children.includes(id)) || []);
+}
+
 
 export const getNodeById = (tree, id) => {
     return (tree.nodes.filter((v) => v.id === id) || [undefined])[0];

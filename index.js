@@ -1,4 +1,4 @@
-import { createTree, createNode, addChildren, addRelationship, callbacks, reorderElements, getNodeById } from "./tree.js";
+import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree } from "./tree.js";
 
 document.querySelector(".arrow").addEventListener("click", () => {
     document.querySelector(".sidebar").classList.toggle("open");
@@ -62,6 +62,10 @@ console.log(addRelationship(tree, 4,5, "1.1.2012", "1.1.2020", "⚭"));
 console.log(addRelationship(tree, 6,7, "1.1.2012", "1.1.2020", "⚭"));
 
 addChildren(tree, 0, 8);
+addChildren(tree, 0, 7);
+addChildren(tree, 1, 1);
+
+console.log(reorderTree(tree));
 
 /*reorderElements(tree, [
     0,3,2,1
