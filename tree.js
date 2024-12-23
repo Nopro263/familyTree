@@ -107,12 +107,12 @@ export const reorderTree = (tree) => {
     Object.keys(levelToNode).sort(function(a, b) {
         return parseInt(b) - parseInt(a);
       }).forEach((i) => {
-        x = levelToNode[i][0].element.offsetWidth * 2;
+        x = levelToNode[0][0].element.offsetWidth * 2;
         for (const node of levelToNode[i]) {
             setPosition(node.element, [x,y]);
             x += node.element.offsetWidth + 50;
         }
-        y += levelToNode[i][0].element.offsetHeight;
+        y += levelToNode[0][0].element.offsetHeight + 50;
     });
 
 

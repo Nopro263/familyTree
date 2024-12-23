@@ -209,7 +209,8 @@ main > * {
 }
 
 input,
-button {
+button,
+select {
     border-radius: 5px;
     border-color: lightgrey;
     border-width: 2px;
@@ -221,6 +222,10 @@ button {
     border-color: var(--blue);
     padding: 0.5em;
     font-size: large;
+}
+
+select {
+    background-color: white;
 }
 
 button:active {
