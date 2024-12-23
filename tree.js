@@ -101,7 +101,19 @@ export const reorderTree = (tree) => {
     const ySteps = Math.abs(extrema[0]) + Math.abs(extrema[1]) + 1;
     const xSteps = maxNodes;
 
+    let x = 0;
+    let y = 0;
 
+    Object.keys(levelToNode).sort(function(a, b) {
+        return parseInt(b) - parseInt(a);
+      }).forEach((i) => {
+        x = 0;
+        for (const node of levelToNode[i]) {
+            setPosition(node.element, [x,y]);
+            x += node.element.offsetWidth + 50;
+        }
+        y += levelToNode[i][0].element.offsetHeight;
+    });
 
 
     return levelToNode;
