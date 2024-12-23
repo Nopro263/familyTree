@@ -53,7 +53,7 @@ const startEdit = (node) => {
         node.element.removeEventListener("click", node.l || null);
 
         callbacks.createElement(node.element, node);
-    })
+    });
 }
 
 const startRelationshipEdit = (node) => {
@@ -62,7 +62,23 @@ const startRelationshipEdit = (node) => {
     });
 
     const sidebar = document.querySelector(".sidebar .content");
-    sidebar.innerHTML = `<h1>${node.type}</h1><p>${node.start || "?"} - ${node.end || "now"}</p>`;
+    sidebar.innerHTML = `<h1>${getNodeById(tree, node.nodes[0]).firstname} ${node.type} ${getNodeById(tree, node.nodes[1]).firstname}</h1>
+    <p>${node.start ? node.start.toLocaleDateString() : "?"} - ${node.end ? node.end.toLocaleDateString() : "now"}</p>
+    <div class="seperator"></div>
+    <div class="row"><label for="start">start</label><input id="start" type="date" value="${node.start ? node.start.toLocaleDateString('en-CA') : "?"}"/></div>
+    <div class="row"><label for="end">born</label><input id="end" type="date" value="${node.end ? node.end.toLocaleDateString('en-CA') : "?"}"/></div>
+    <div class="row"><label for="type">type</label><select id="type"><option value="⚭" ${node.type === "⚭" ? 'selected="selected"' : ""}>Married</option><option value="+" ${node.type === "+" ? 'selected="selected"' : ""}>Not Married</option></select></div>
+    <button class="end" id="save">save</button>`;
+
+    sidebar.querySelector("#save").addEventListener("click", (ev) => {
+        node.start = new Date(sidebar.querySelector("#start").value);
+        node.end = new Date(sidebar.querySelector("#end").value);
+        node.type = sidebar.querySelector("#type").value;
+
+        node.element.removeEventListener("click", node.l || null);
+
+        callbacks.createRelationship(node.element, node);
+    });
 }
 
 const tree = createTree(".mainCanvas");

@@ -47,8 +47,8 @@ export const addRelationship = (tree, node1Id, node2Id, start, end, type) => {
 
     const relationship = {
         "nodes": [node1Id, node2Id],
-        "start": start,
-        "end": end,
+        "start": start ? new Date(start) : null,
+        "end": end ? new Date(end) : null,
         "type": type,
         "id": relationshipId++,
         "children": [],
