@@ -75,7 +75,36 @@ export const reorderTree = (tree) => {
 
     rt(tree, node, nodeLevel, levels);
 
-    return levels;
+    const levelToNode = {};
+
+    let extrema = [0,0];
+    let maxNodes = 0;
+    
+    for (const [nodeId, level] of Object.entries(levels)) {
+        if(!levelToNode[level]) {
+            levelToNode[level] = [];
+        }
+
+        if(level < extrema[0]) {
+            extrema[0] = level;
+        }
+        if(level > extrema[1]) {
+            extrema[1] = level;
+        }
+
+        levelToNode[level].push(getNodeById(tree, parseInt(nodeId)));
+        if(levelToNode[level].length > maxNodes) {
+            maxNodes = levelToNode[level].length;
+        }
+    }
+
+    const ySteps = Math.abs(extrema[0]) + Math.abs(extrema[1]) + 1;
+    const xSteps = maxNodes;
+
+
+
+
+    return levelToNode;
 }
 
 const rt = (tree, node, nodeLevel, levels) => {
@@ -87,9 +116,7 @@ const rt = (tree, node, nodeLevel, levels) => {
             }
             levels[otherNode] = nodeLevel;
 
-            console.log("all of spouse", otherNode)
             addAllParents(getNodeById(tree, otherNode));
-            console.log("end")
 
             element.children.forEach(child => {
                 if(levels[child] !== undefined) {
