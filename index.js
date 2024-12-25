@@ -1,11 +1,14 @@
 import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree } from "./tree.js";
 
+let connectNodes = [];
+
 document.querySelector(".arrow").addEventListener("click", () => {
     document.querySelector(".sidebar").classList.toggle("open");
 });
 
 document.querySelector(".hoverelements > *:nth-child(1)").addEventListener("click", () => {
-    console.log("1")
+    document.body.classList.add("line_connect");
+    connectNodes = [];
 });
 
 document.querySelector(".hoverelements > *:nth-child(2)").addEventListener("click", () => {
@@ -15,12 +18,37 @@ document.querySelector(".hoverelements > *:nth-child(2)").addEventListener("clic
     document.querySelector(".sidebar").classList.add("open");
 });
 
+const addNode = (node) => {
+    connectNodes.push(node);
+
+    if(connectNodes.length == 2) {
+        if(connectNodes[0].children === undefined && connectNodes[1].children === undefined) { // two nodes
+            const relationship = addRelationship(tree, connectNodes[0].id, connectNodes[1].id, undefined, undefined, "+");
+
+            startRelationshipEdit(relationship);
+            relationship.element.classList.add("active");
+            document.querySelector(".sidebar").classList.add("open");
+        } else if(connectNodes.filter(v => v.children === undefined)) { // one node and on relationship
+            const connNode = connectNodes.filter(v => v.children === undefined)[0];
+            const connRelationship = connectNodes.filter(v => v.children !== undefined)[0];
+
+            addChildren(tree, connRelationship.id, connNode.id);
+        }
+        connectNodes = [];
+        document.body.classList.remove("line_connect");
+    }
+}
+
 callbacks.createElement = (element, node) => {
     element.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth ? node.birth.toLocaleDateString() : "?"} - ${node.death ? node.death.toLocaleDateString() : "now"}</p>`;
     const l = () => {
-        startEdit(node);
-        element.classList.add("active");
-        document.querySelector(".sidebar").classList.add("open");
+        if(document.body.classList.contains("line_connect")) {
+            addNode(node);
+        } else {
+            startEdit(node);
+            element.classList.add("active");
+            document.querySelector(".sidebar").classList.add("open");
+        }
     };
     element.addEventListener("click", l);
     node.listener = l;
@@ -30,9 +58,13 @@ callbacks.createRelationship = (element, relationship) => {
     element.innerHTML = relationship.type;
 
     element.addEventListener("click", () => {
-        startRelationshipEdit(relationship);
-        element.classList.add("active");
-        document.querySelector(".sidebar").classList.add("open");
+        if(document.body.classList.contains("line_connect")) {
+            addNode(relationship);
+        } else {
+            startRelationshipEdit(relationship);
+            element.classList.add("active");
+            document.querySelector(".sidebar").classList.add("open");
+        }
     });
 }
 
@@ -64,6 +96,8 @@ const startEdit = (node) => {
         node.element.removeEventListener("click", node.l || null);
 
         callbacks.createElement(node.element, node);
+        startEdit(node);
+        node.element.classList.add("active");
     });
 }
 

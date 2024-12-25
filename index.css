@@ -322,3 +322,7 @@ input:disabled {
     bottom: 0;
     opacity: 0;
 }
+
+body.line_connect {
+    cursor: crosshair;
+}
