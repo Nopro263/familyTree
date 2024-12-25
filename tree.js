@@ -102,7 +102,7 @@ export const reorderTree = (tree) => {
     const xSteps = maxNodes;
 
     let x = 0;
-    let y = 0;
+    let y = levelToNode[0][0].element.offsetHeight * 2;;
 
     Object.keys(levelToNode).sort(function(a, b) {
         return parseInt(b) - parseInt(a);
@@ -110,7 +110,7 @@ export const reorderTree = (tree) => {
         x = levelToNode[0][0].element.offsetWidth * 2;
         for (const node of levelToNode[i]) {
             setPosition(node.element, [x,y]);
-            x += node.element.offsetWidth + 50;
+            x += node.element.offsetWidth + 100;
         }
         y += levelToNode[0][0].element.offsetHeight + 50;
     });
