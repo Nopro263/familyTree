@@ -166,6 +166,8 @@ export const connectDirect = (canvas, element1, element2) => {
         line.setAttribute("y2", getVal(element2.style.top) + element2.offsetHeight / 2);
     }
 
+    updatePos();
+
     element1.addEventListener("dragend", updatePos);
     element2.addEventListener("dragend", updatePos);
 
