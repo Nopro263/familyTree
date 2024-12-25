@@ -20,6 +20,10 @@ document.querySelector(".hoverelements > *:nth-child(2)").addEventListener("clic
 
 const addNode = (node) => {
     connectNodes.push(node);
+    document.querySelectorAll(".active").forEach((v) => {
+        v.classList.remove("active");
+    });
+    node.element.classList.add("active");
 
     if(connectNodes.length == 2) {
         if(connectNodes[0].children === undefined && connectNodes[1].children === undefined) { // two nodes
