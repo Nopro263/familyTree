@@ -4,6 +4,17 @@ document.querySelector(".arrow").addEventListener("click", () => {
     document.querySelector(".sidebar").classList.toggle("open");
 });
 
+document.querySelector(".hoverelements > *:nth-child(1)").addEventListener("click", () => {
+    console.log("1")
+});
+
+document.querySelector(".hoverelements > *:nth-child(2)").addEventListener("click", () => {
+    const node = createNode(tree, "John", "Doe", "1.1.1990", undefined);
+    startEdit(node);
+    node.element.classList.add("active");
+    document.querySelector(".sidebar").classList.add("open");
+});
+
 callbacks.createElement = (element, node) => {
     element.innerHTML = `<h1>${node.firstname} ${node.lastname}</h1><p>${node.birth ? node.birth.toLocaleDateString() : "?"} - ${node.death ? node.death.toLocaleDateString() : "now"}</p>`;
     const l = () => {

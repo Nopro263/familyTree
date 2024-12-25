@@ -309,6 +309,9 @@ input:disabled {
     margin-right: 0.2em;
 
     border-radius: 2.5px;
+
+    align-self: center;
+    width: calc(100% - 0.4em);
 }
 
 .hoverelements > *:hover {

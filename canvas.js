@@ -21,8 +21,14 @@ export const initCanvas = (canvas) => {
     svg.setAttribute("width", window.innerWidth);
     svg.setAttribute("height", window.innerHeight);
     svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + window.innerHeight);
+
+    addEventListener("resize", (event) => {
+        svg.setAttribute("width", window.innerWidth);
+        svg.setAttribute("height", window.innerHeight);
+        svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + window.innerHeight);
+    });
+
     
-    console.log(svg)
 
     canvas.appendChild(svg);
 
@@ -65,6 +71,9 @@ export const createElement = (canvas) => {
     element.addEventListener("dragend" , (ev) => {
         ev.target.classList.remove("dragging");
     });
+
+    element.style.left = `${ window.innerWidth / 2 }px`;
+    element.style.top = `${ window.innerHeight / 2 }px`;
 
     return element;
 }
