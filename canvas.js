@@ -183,3 +183,27 @@ export const setPosition = (element, position) => {
 
     element.dispatchEvent(new DragEvent("dragend"));
 }
+
+export const getPosition = (element) => {
+    return [getVal(element.style.left), getVal(element.style.top)]
+}
+
+export const scale = (canvas, delta) => {
+    const currentScale = canvas.currentScale || 1;
+
+    for(let index = 0; index < canvas.children.length; index++) {
+        const element = canvas.children[index];
+
+        const position = getPosition(element);
+        setPosition(element, [position[0] * delta , position[1] * delta]);
+    }
+
+    canvas.currentScale = currentScale * delta;
+}
+
+export const setScale = (canvas, targetScale) => {
+    const currentScale = canvas.currentScale || 1;
+    const relativeScale = targetScale / currentScale;
+
+    scale(canvas, relativeScale);
+}

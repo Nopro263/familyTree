@@ -1,3 +1,4 @@
+import { scale, setScale } from "./canvas.js";
 import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree } from "./tree.js";
 
 let connectNodes = [];
@@ -17,6 +18,17 @@ document.querySelector(".hoverelements > *:nth-child(2)").addEventListener("clic
     node.element.classList.add("active");
     document.querySelector(".sidebar").classList.add("open");
 });
+
+window.addEventListener("wheel", (ev) => {
+    if(ev.ctrlKey) {
+        ev.preventDefault();
+        if(ev.deltaY < 0) {
+            scale(tree.canvas, 1.1);
+        } else if(ev.deltaY > 0) {
+            scale(tree.canvas, 0.9);
+        }
+    }
+}, { passive: false })
 
 const addNode = (node) => {
     connectNodes.push(node);
