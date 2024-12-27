@@ -189,6 +189,10 @@ main > * {
     position: absolute;
 }
 
+.mainCanvas :not(svg) {
+    scale: var(--scale, 1);
+}
+
 .dragging {
     opacity: 0.5;
 }

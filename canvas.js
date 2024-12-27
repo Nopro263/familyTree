@@ -189,6 +189,7 @@ export const getPosition = (element) => {
 }
 
 export const scale = (canvas, delta) => {
+    const scale = parseFloat(canvas.style.getPropertyValue("scale") == "" ? "1" : canvas.style.getPropertyValue("scale")) + (delta >= 1 ? 0.1 : -0.1);
     for(let index = 0; index < canvas.children.length; index++) {
         const element = canvas.children[index];
 
@@ -199,6 +200,8 @@ export const scale = (canvas, delta) => {
         const position = getPosition(element);
         setPosition(element, [position[0] * delta , position[1] * delta]);
     }
+
+    canvas.style.setProperty("scale", scale);
 }
 
 export const moveAllElements = (canvas, delta) => {
