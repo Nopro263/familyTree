@@ -193,18 +193,29 @@ main > * {
     border-color: var(--blue);
 }
 
+.content > * {
+    --margin-l: 0.5em;
+    --margin-r: 0.5em;
+    --margin-t: 0.5em;
+    --margin-b: 0.5em;
+    width: calc(100% - var(--margin-r) - var(--margin-l));
+
+    margin-left: var(--margin-l);
+    margin-right: var(--margin-r);
+    margin-top: var(--margin-t);
+    margin-bottom: var(--margin-b);
+}
+
 .seperator {
     height: 2px;
-    width: 100%;
+    width: calc(100%);
     background-color: lightgrey;
+
+    translate: calc(-1 * var(--margin-r)) 0;
 }
 
 .row {
-    --margin: 0.5em;
-    width: calc(100% - var(--margin) * 2);
     display: flex;
-
-    margin: var(--margin);
     justify-content: space-between;
 }
 
