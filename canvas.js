@@ -189,21 +189,27 @@ export const getPosition = (element) => {
 }
 
 export const scale = (canvas, delta) => {
-    const currentScale = canvas.currentScale || 1;
-
     for(let index = 0; index < canvas.children.length; index++) {
         const element = canvas.children[index];
+
+        if(!element.classList.contains("element")) {
+            continue;
+        }
 
         const position = getPosition(element);
         setPosition(element, [position[0] * delta , position[1] * delta]);
     }
-
-    canvas.currentScale = currentScale * delta;
 }
 
-export const setScale = (canvas, targetScale) => {
-    const currentScale = canvas.currentScale || 1;
-    const relativeScale = targetScale / currentScale;
+export const moveAllElements = (canvas, delta) => {
+    for(let index = 0; index < canvas.children.length; index++) {
+        const element = canvas.children[index];
 
-    scale(canvas, relativeScale);
+        if(!element.classList.contains("element")) {
+            continue;
+        }
+
+        const position = getPosition(element);
+        setPosition(element, [position[0] + delta[0] , position[1] + delta[1]]);
+    }
 }

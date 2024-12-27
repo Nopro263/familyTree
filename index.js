@@ -1,7 +1,9 @@
-import { scale, setScale } from "./canvas.js";
+import { moveAllElements, scale } from "./canvas.js";
 import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree } from "./tree.js";
 
 let connectNodes = [];
+
+const SENSITIVITY = 40;
 
 document.querySelector(".arrow").addEventListener("click", () => {
     document.querySelector(".sidebar").classList.toggle("open");
@@ -26,6 +28,20 @@ window.addEventListener("wheel", (ev) => {
             scale(tree.canvas, 1.1);
         } else if(ev.deltaY > 0) {
             scale(tree.canvas, 0.9);
+        }
+    } else if(ev.altKey || ev.shiftKey) {
+        ev.preventDefault();
+        if(ev.deltaY < 0) {
+            moveAllElements(tree.canvas, [SENSITIVITY, 0]);
+        } else if(ev.deltaY > 0) {
+            moveAllElements(tree.canvas, [-SENSITIVITY, 0]);
+        }
+    } else {
+        ev.preventDefault();
+        if(ev.deltaY < 0) {
+            moveAllElements(tree.canvas, [0, SENSITIVITY]);
+        } else if(ev.deltaY > 0) {
+            moveAllElements(tree.canvas, [0, -SENSITIVITY]);
         }
     }
 }, { passive: false })
