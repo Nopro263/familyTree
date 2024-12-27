@@ -127,6 +127,9 @@ const startRelationshipEdit = (node) => {
         node.element.removeEventListener("click", node.l || null);
 
         callbacks.createRelationship(node.element, node);
+
+        startRelationshipEdit(node);
+        node.element.classList.add("active");
     });
 }
 

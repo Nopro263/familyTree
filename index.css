@@ -33,6 +33,10 @@ main > * {
     height: 100%;
 
     transition: translate 100ms;
+
+    width: max-content;
+    max-width: fit-content;
+    min-width: 15%;
 }
 
 .sidebar:not(.open) {
@@ -224,7 +228,7 @@ button,
 select {
     border-radius: 5px;
     border-color: lightgrey;
-    border-width: 2px;
+    border-width: 1px;
     border-style: solid;
 }
 
