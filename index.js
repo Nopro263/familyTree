@@ -25,9 +25,9 @@ window.addEventListener("wheel", (ev) => {
     if(ev.ctrlKey) {
         ev.preventDefault();
         if(ev.deltaY < 0) {
-            scale(tree.canvas, 1.1);
+            scale(tree.canvas, 1.05);
         } else if(ev.deltaY > 0) {
-            scale(tree.canvas, 0.9);
+            scale(tree.canvas, 0.95);
         }
     } else if(ev.altKey || ev.shiftKey) {
         ev.preventDefault();
