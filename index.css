@@ -7,6 +7,11 @@ html,body {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow-y: hidden;
 }
 
 main {
@@ -157,7 +162,7 @@ main > * {
 
 .mainCanvas {
     width: 100vw;
-    height: 100vh;
+    height: 90vh;
     background-color: gray;
 
     display: block;
@@ -344,4 +349,21 @@ input:disabled {
 
 body.line_connect {
     cursor: crosshair;
+}
+
+.custom-slider {
+    width: 100%;
+}
+
+.custom-slider > input {
+    width: calc(100% - 4px);
+}
+
+.custom-slider > .hover {
+    width: fit-content;
+}
+
+.custom-slider > .hover > * {
+    translate: calc(var(--l, 0) - 50% + 15px) 0;
+    transform-origin: 50% 50%;
 }

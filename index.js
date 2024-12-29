@@ -5,6 +5,14 @@ let connectNodes = [];
 
 const SENSITIVITY = 40;
 
+document.querySelector(".custom-slider > input").addEventListener("input", (ev) => {
+    const p = (ev.target.value - ev.target.min) / (ev.target.max - ev.target.min);
+
+    const e = document.querySelector(".custom-slider > .hover");
+    e.style.setProperty("--l", `${(window.innerWidth - 4 - 15) * p}px`)
+    
+});
+
 document.querySelector(".arrow").addEventListener("click", () => {
     document.querySelector(".sidebar").classList.toggle("open");
 });
