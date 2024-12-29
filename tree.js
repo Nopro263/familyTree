@@ -179,3 +179,31 @@ export const getRelationshipsWithNodeIdAsChild = (tree, id) => {
 export const getNodeById = (tree, id) => {
     return (tree.nodes.filter((v) => v.id === id) || [undefined])[0];
 }
+
+export const getExtramaNodes = (tree) => {
+    const extrema = {
+        "min": null,
+        "max": null
+    };
+    
+    tree.nodes.forEach(node => {
+        if(node.birth && (extrema.min === null || node.birth < extrema.min.birth)) {
+            extrema.min = node;
+        }
+
+        if(extrema.max === null || !node.death || node.death > extrema.max.death) {
+            extrema.max = node;
+        }
+    });
+
+    return extrema;
+}
+
+export const getExtramas = (tree) => {
+    const extrema = getExtramaNodes(tree);
+
+    return {
+        "min": extrema.min.birth,
+        "max": extrema.max.death || new Date() 
+    };
+}
