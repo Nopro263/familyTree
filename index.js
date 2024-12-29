@@ -1,5 +1,5 @@
 import { moveAllElements, scale } from "./canvas.js";
-import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree, getExtramas } from "./tree.js";
+import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree, getExtramas, onlyShowNodes } from "./tree.js";
 
 let connectNodes = [];
 
@@ -11,7 +11,8 @@ document.querySelector(".custom-slider > input").addEventListener("input", (ev) 
     const e = document.querySelector(".custom-slider > .hover");
     e.style.setProperty("--l", `${(window.innerWidth - 4 - 15 - 40) * p}px`)
     e.querySelector("p").innerText = ev.target.value;
-    console.log(ev.target.value);
+
+    onlyShowNodes(tree, parseInt(ev.target.value));
 });
 
 document.querySelector(".arrow").addEventListener("click", () => {
@@ -98,7 +99,7 @@ callbacks.createElement = (element, node) => {
         const slider = document.querySelector(".custom-slider > input");
         const extremas = getExtramas(tree);
         slider.min = extremas.min.getFullYear();
-        slider.max = extremas.max.getFullYear();
+        slider.max = new Date().getFullYear();
     } catch {
 
     }

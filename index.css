@@ -368,3 +368,7 @@ body.line_connect {
     translate: calc(var(--l, 0) - 50% + 30px) 0;
     transform-origin: 50% 50%;
 }
+
+.hidden {
+    opacity: 0.25;
+}

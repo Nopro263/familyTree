@@ -180,7 +180,7 @@ export const getNodeById = (tree, id) => {
     return (tree.nodes.filter((v) => v.id === id) || [undefined])[0];
 }
 
-export const getExtramaNodes = (tree) => {
+const getExtramaNodes = (tree) => {
     const extrema = {
         "min": null,
         "max": null
@@ -206,4 +206,28 @@ export const getExtramas = (tree) => {
         "min": extrema.min.birth,
         "max": extrema.max.death || new Date() 
     };
+}
+
+export const onlyShowNodes = (tree, currentYear) => {
+    reset(tree);
+    const relationships = tree.relationships.filter(relationship => !(relationship.start.getFullYear() <= currentYear && relationship.end.getFullYear() >= currentYear));
+    const nodes = tree.nodes.filter(node => !(node.birth.getFullYear() <= currentYear && (!node.death || node.death.getFullYear() >= currentYear)));
+
+    nodes.forEach(node => {
+        node.element.classList.add("hidden");
+    });
+
+    relationships.forEach(relationship => {
+        relationship.element.classList.add("hidden");
+    });
+}
+
+export const reset = (tree) => {
+    tree.nodes.forEach(node => {
+        node.element.classList.remove("hidden");
+    });
+
+    tree.relationships.forEach(relationship => {
+        relationship.element.classList.remove("hidden");
+    });
 }
