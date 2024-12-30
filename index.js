@@ -5,15 +5,18 @@ let connectNodes = [];
 
 const SENSITIVITY = 40;
 
-document.querySelector(".custom-slider > input").addEventListener("input", (ev) => {
-    const p = (ev.target.value - ev.target.min) / (ev.target.max - ev.target.min);
+const onInputUpdate = () => {
+    const element = document.querySelector(".custom-slider > input");
+    const p = (element.value - element.min) / (element.max - element.min);
 
     const e = document.querySelector(".custom-slider > .hover");
     e.style.setProperty("--l", `${(window.innerWidth - 4 - 15 - 40) * p}px`)
-    e.querySelector("p").innerText = ev.target.value;
+    e.querySelector("p").innerText = element.value;
 
-    onlyShowNodes(tree, parseInt(ev.target.value));
-});
+    onlyShowNodes(tree, parseInt(element.value));
+}
+
+document.querySelector(".custom-slider > input").addEventListener("input", onInputUpdate);
 
 document.querySelector(".arrow").addEventListener("click", () => {
     document.querySelector(".sidebar").classList.toggle("open");
@@ -100,6 +103,8 @@ callbacks.createElement = (element, node) => {
         const extremas = getExtramas(tree);
         slider.min = extremas.min.getFullYear();
         slider.max = new Date().getFullYear();
+
+        onInputUpdate();
     } catch {
 
     }
