@@ -358,6 +358,29 @@ body.line_connect {
 .custom-slider > input {
     width: calc(100% - 4px - 40px);
     margin-left: 20px;
+    margin-top: 10px;
+
+    border-radius: 50px;
+}
+
+.custom-slider > input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+}
+.custom-slider > input::-webkit-slider-thumb,
+.custom-slider > input::-moz-range-thumb {
+    opacity: 1;
+    width: 15px;
+    height: 15px;
+    background-color: var(--lightblue);
+    cursor: pointer;
+
+    border-radius: 50px;
+}
+
+.custom-slider > input:active::-webkit-slider-thumb,
+.custom-slider > input:active::-moz-range-thumb {
+    background-color: var(--blue);
 }
 
 .custom-slider > .hover {
