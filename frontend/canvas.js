@@ -1,3 +1,6 @@
+import { callbacks } from "./data.js";
+import { getNodeByHTMLId, getRelationshipByHTMLId } from "./tree.js";
+
 let lastId = 0;
 
 const dragData = {};
@@ -12,6 +15,12 @@ const setNewAbsolutePosition = (element, oldPos, newPos) => {
 
     element.style.left = `${ getVal(element.style.left) + dx }px`;
     element.style.top = `${ getVal(element.style.top) + dy }px`;
+
+    if(element.classList.contains("element")) {
+        callbacks.onMoveNode(getNodeByHTMLId(element.id), [dx, dy]);
+    } else {
+        callbacks.onMoveRelationship(getRelationshipByHTMLId(element.id), [dx, dy]);
+    }
 }
 
 export const initCanvas = (canvas) => {

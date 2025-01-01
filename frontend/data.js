@@ -19,3 +19,16 @@ function bytesToBase64(bytes) {
     ).join("");
     return btoa(binString);
 }
+
+export const callbacks = {
+    "createElement": (element, node) => {element.innerHTML = node.firstname},
+    "createRelationship": (element, relationship) => {element.innerHTML = "+"},
+    
+    "onCreateNode": (node) => {},
+    "onCreateRealtionship": (nodes) => {},
+    "onAddChildren": (relationshipId, childId) => {},
+    "onMoveNode": (nodeId, position) => {},
+    "onMoveRelationship": (relationshipId, position) => {},
+    "onEditNode": (node) => {},
+    "onEditRealtionship": (relationship) => {},
+}

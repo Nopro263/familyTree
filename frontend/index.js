@@ -1,6 +1,6 @@
 import { moveAllElements, scale } from "./canvas.js";
-import { deserialize, serialize } from "./data.js";
-import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree } from "./tree.js";
+import { deserialize, serialize, callbacks } from "./data.js";
+import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree } from "./tree.js";
 
 let connectNodes = [];
 
@@ -155,6 +155,8 @@ const startEdit = (node) => {
         callbacks.createElement(node.element, node);
         startEdit(node);
         node.element.classList.add("active");
+
+        callbacks.onEditNode(node);
     });
 }
 
@@ -183,6 +185,8 @@ const startRelationshipEdit = (node) => {
 
         startRelationshipEdit(node);
         node.element.classList.add("active");
+
+        callbacks.onEditRealtionship(node);
     });
 }
 
@@ -206,6 +210,31 @@ const imported = (data) => {
     importTree(data, tree);
 }
 
+const live = (project) => {
+    const wsUrl = new URL(url);
+    wsUrl.port = "8000";
+    wsUrl.pathname = `/api/ws/${project}`;
+    wsUrl.search = "";
+
+    const ws = new WebSocket(wsUrl);
+
+    ws.addEventListener("open", (ev) => {
+        console.log("open", ev);
+    });
+
+    ws.addEventListener("message", (ev) => {
+        console.log(ev.data)
+    });
+
+    ws.addEventListener("error", (ev) => {
+        console.log("error", ev);
+    });
+
+    ws.addEventListener("close", (ev) => {
+        console.log("close", ev);
+    });
+}
+
 document.querySelector(".export").addEventListener("click", () => {
     console.log(serialize(exportTree(tree)));
 })
@@ -213,6 +242,8 @@ document.querySelector(".export").addEventListener("click", () => {
 const url = new URL(window.location);
 if(url.searchParams.get("data")) {
     imported(deserialize(url.searchParams.get("data")));
+} else if(url.searchParams.get("project")) {
+    live(url.searchParams.get("project"));
 } else {
     main();
 }

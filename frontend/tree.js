@@ -1,23 +1,23 @@
 import { connectElements, createElement, initCanvas, connectDirect, setPosition, getPosition } from "./canvas.js";
+import { callbacks } from "./data.js";
 
 let nodeId = 0;
 let relationshipId = 0;
 
-export const callbacks = {
-    "createElement": (element, node) => {element.innerHTML = node.firstname},
-    "createRelationship": (element, relationship) => {element.innerHTML = "+"}
-}
+let tree = null;
 
 export const createTree = (selector) => {
     const canvas = document.querySelector(selector);
 
     initCanvas(canvas);
 
-    return {
+    tree = {
         "nodes": [],
         "relationships": [],
         "canvas": canvas
     }
+
+    return tree;
 }
 
 export const createNode = (tree, firstname, lastname, birth, death, id=null) => {
@@ -35,6 +35,8 @@ export const createNode = (tree, firstname, lastname, birth, death, id=null) => 
     callbacks.createElement(element, node);
 
     tree.nodes.push(node);
+
+    callbacks.onCreateNode(node);
     return node;
 }
 
@@ -58,6 +60,8 @@ export const addRelationship = (tree, node1Id, node2Id, start, end, type, id=nul
     callbacks.createRelationship(element, relationship);
 
     tree.relationships.push(relationship);
+
+    callbacks.onCreateRealtionship(relationship);
     return relationship;
 }
 
@@ -66,6 +70,8 @@ export const addChildren = (tree, relationshipId, nodeId) => {
     relationship.children.push(nodeId);
 
     connectDirect(tree.canvas, relationship.element, getNodeById(tree, nodeId).element);
+
+    callbacks.onAddChildren(relationshipId, nodeId);
 }
 
 export const reorderTree = (tree) => {
@@ -178,6 +184,14 @@ export const getRelationshipsWithNodeIdAsChild = (tree, id) => {
 
 export const getNodeById = (tree, id) => {
     return (tree.nodes.filter((v) => v.id === id) || [undefined])[0];
+}
+
+export const getNodeByHTMLId = (id) => {
+    return (tree.nodes.filter((v) => v.element.id === id) || [undefined])[0];
+}
+
+export const getRelationshipByHTMLId = (id) => {
+    return (tree.relationships.filter((v) => v.element.id === id) || [undefined])[0];
 }
 
 const getExtramaNodes = (tree) => {
