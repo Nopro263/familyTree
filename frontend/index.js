@@ -1,6 +1,6 @@
-import { moveAllElements, scale } from "./canvas.js";
+import { moveAllElements, scale, setPosition } from "./canvas.js";
 import { deserialize, serialize, callbacks } from "./data.js";
-import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree } from "./tree.js";
+import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree, getRelationshipById } from "./tree.js";
 
 let connectNodes = [];
 
@@ -223,7 +223,21 @@ const live = (project) => {
     });
 
     ws.addEventListener("message", (ev) => {
-        console.log(ev.data)
+        let raw = JSON.parse(ev.data);
+        let data = raw["data"];
+        console.log(data)
+        switch (raw["type"]) {
+            case "moveNode":
+                setPosition(getNodeById(tree, data["id"]).element, [data["position"]["x"], data["position"]["y"]])
+                break;
+            
+            case "moveRelationship":
+                setPosition(getRelationshipById(tree, data["id"]).element, [data["position"]["x"], data["position"]["y"]])
+                break;
+        
+            default:
+                break;
+        }
     });
 
     ws.addEventListener("error", (ev) => {
@@ -233,6 +247,24 @@ const live = (project) => {
     ws.addEventListener("close", (ev) => {
         console.log("close", ev);
     });
+
+    callbacks.onMoveNode = (node, position) => {
+        ws.send(JSON.stringify({
+            "type": "moveNode",
+            "id": node.id,
+            "x": position[0],
+            "y": position[1]
+        }))
+    }
+
+    callbacks.onMoveRelationship = (node, position) => {
+        ws.send(JSON.stringify({
+            "type": "moveRelationship",
+            "id": node.id,
+            "x": position[0],
+            "y": position[1]
+        }))
+    }
 }
 
 document.querySelector(".export").addEventListener("click", () => {
@@ -243,6 +275,7 @@ const url = new URL(window.location);
 if(url.searchParams.get("data")) {
     imported(deserialize(url.searchParams.get("data")));
 } else if(url.searchParams.get("project")) {
+    imported(deserialize("eyJub2RlcyI6W3siZmlyc3RuYW1lIjoiSmltIiwibGFzdG5hbWUiOiJEb2UiLCJiaXJ0aCI6IjE5ODktMTItMzFUMjM6MDA6MDAuMDAwWiIsImRlYXRoIjpudWxsLCJpZCI6MCwiZWxlbWVudCI6WzM1MCwxODRdfSx7ImZpcnN0bmFtZSI6IkppbGwiLCJsYXN0bmFtZSI6IkRvZSIsImJpcnRoIjoiMTk5MS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZGVhdGgiOiIyMDE5LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJpZCI6MSwiZWxlbWVudCI6WzYyNSwxODRdfSx7ImZpcnN0bmFtZSI6IlRpbSIsImxhc3RuYW1lIjoiRG9lIiwiYmlydGgiOiIyMDE0LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJkZWF0aCI6bnVsbCwiaWQiOjIsImVsZW1lbnQiOls3NTYsMzczXX1dLCJyZWxhdGlvbnNoaXBzIjpbeyJub2RlcyI6WzAsMV0sInN0YXJ0IjoiMjAxMS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZW5kIjoiMjAxOS0xMi0zMVQyMzowMDowMC4wMDBaIiwidHlwZSI6IuKarSIsImlkIjowLCJjaGlsZHJlbiI6WzJdLCJlbGVtZW50IjpbNTY2LDIwOF19XX0="));
     live(url.searchParams.get("project"));
 } else {
     main();

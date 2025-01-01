@@ -17,6 +17,8 @@ async def websocket(websocket: WebSocket, project: str):
     while True:
         data = await websocket.receive_json()
 
+        print(data)
+
         match data["type"]:
             case "moveNode":
                 await manager.on_move_node(websocket, Move(

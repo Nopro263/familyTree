@@ -66,15 +66,20 @@ class WebsocketManager:
             await self.close_error(ws, "invalid project")
         
         await self.send(ws, self.projectManager.get_current_project_data(project))
+
+        if project not in self.sockets:
+            self.sockets[project] = []
+        
+        self.sockets[project].append(ws)
     
     async def on_move_node(self, origin: WebSocket, data: Move):
-        self.send_to_all(origin, TypedData(
+        await self.send_to_all(origin, TypedData(
             type="moveNode",
             data=data
             ))
 
     async def on_move_relationship(self, origin: WebSocket, data: Move):
-        self.send_to_all(origin, TypedData(
+        await self.send_to_all(origin, TypedData(
             type="moveRelationship",
             data=data
             ))
@@ -98,7 +103,7 @@ class WebsocketManager:
         for ws in self.sockets[self.get_project(origin)]:
             if ws is origin:
                 continue
-            self.send(ws, data)
+            await self.send(ws, data)
 
     async def close_error(self, ws: WebSocket, message: str):
         await ws.send_text(f"error {message}")
@@ -117,6 +122,8 @@ class WebsocketManager:
         try:
             await ws.send_text(data)
         except WebSocketDisconnect:
+            self.remove(ws)
+        except RuntimeError:
             self.remove(ws)
     
     def get_project(self, ws: WebSocket) -> Optional[str]:

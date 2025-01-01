@@ -17,9 +17,9 @@ const setNewAbsolutePosition = (element, oldPos, newPos) => {
     element.style.top = `${ getVal(element.style.top) + dy }px`;
 
     if(element.classList.contains("element")) {
-        callbacks.onMoveNode(getNodeByHTMLId(element.id), [dx, dy]);
+        callbacks.onMoveNode(getNodeByHTMLId(element.id), [newPos.clientX, newPos.clientY]);
     } else {
-        callbacks.onMoveRelationship(getRelationshipByHTMLId(element.id), [dx, dy]);
+        callbacks.onMoveRelationship(getRelationshipByHTMLId(element.id), [newPos.clientX, newPos.clientY]);
     }
 }
 
