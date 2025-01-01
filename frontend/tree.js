@@ -1,4 +1,4 @@
-import { connectElements, createElement, initCanvas, connectDirect, setPosition } from "./canvas.js";
+import { connectElements, createElement, initCanvas, connectDirect, setPosition, getPosition } from "./canvas.js";
 
 let nodeId = 0;
 let relationshipId = 0;
@@ -20,7 +20,7 @@ export const createTree = (selector) => {
     }
 }
 
-export const createNode = (tree, firstname, lastname, birth, death) => {
+export const createNode = (tree, firstname, lastname, birth, death, id=null) => {
     const element = createElement(tree.canvas);
 
     const node = {
@@ -28,7 +28,7 @@ export const createNode = (tree, firstname, lastname, birth, death) => {
         "lastname": lastname,
         "birth": birth ? new Date(birth) : null,
         "death": death ? new Date(death) : null,
-        "id": nodeId++,
+        "id": id ? id : nodeId++,
         "element": element
     }
 
@@ -38,7 +38,7 @@ export const createNode = (tree, firstname, lastname, birth, death) => {
     return node;
 }
 
-export const addRelationship = (tree, node1Id, node2Id, start, end, type) => {
+export const addRelationship = (tree, node1Id, node2Id, start, end, type, id=null) => {
     const node1 = getNodeById(tree, node1Id);
     const node2 = getNodeById(tree, node2Id);
 
@@ -50,7 +50,7 @@ export const addRelationship = (tree, node1Id, node2Id, start, end, type) => {
         "start": start ? new Date(start) : null,
         "end": end ? new Date(end) : null,
         "type": type,
-        "id": relationshipId++,
+        "id": id ? id :relationshipId++,
         "children": [],
         "element": element
     }
@@ -229,5 +229,53 @@ export const reset = (tree) => {
 
     tree.relationships.forEach(relationship => {
         relationship.element.classList.remove("hidden");
+    });
+}
+
+export const exportTree = (tree) => {
+    const exportedTree = {
+        "nodes": [],
+        "relationships": []
+    }
+
+    tree.nodes.forEach(node => {
+        exportedTree.nodes.push({
+            "firstname": node.firstname,
+            "lastname": node.lastname,
+            "birth": node.birth,
+            "death": node.death,
+            "id": node.id,
+            "element": getPosition(node.element)
+        })
+    });
+
+    tree.relationships.forEach(relationship => {
+        exportedTree.relationships.push({
+            "nodes": relationship.nodes,
+            "start": relationship.start,
+            "end": relationship.end,
+            "type": relationship.type,
+            "id": relationship.id,
+            "children": relationship.children,
+            "element": getPosition(relationship.element)
+        });
+    });
+
+    return exportedTree;
+}
+
+export const importTree = (exportedTree, tree) => {
+    exportedTree.nodes.forEach(node => {
+        const element = createNode(tree, node.firstname, node.lastname, node.birth, node.death, node.id);
+        setPosition(element.element, node.element);
+    });
+
+    exportedTree.relationships.forEach(r => {
+        const element = addRelationship(tree, r.nodes[0], r.nodes[1], r.start, r.end, r.type, r.id);
+        setPosition(element.element, r.element);
+
+        r.children.forEach(child => {
+            addChildren(tree, r.id, child);
+        });
     });
 }

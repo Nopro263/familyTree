@@ -1,5 +1,6 @@
 import { moveAllElements, scale } from "./canvas.js";
-import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree, getExtramas, onlyShowNodes } from "./tree.js";
+import { deserialize, serialize } from "./data.js";
+import { createTree, createNode, addChildren, addRelationship, callbacks, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree } from "./tree.js";
 
 let connectNodes = [];
 
@@ -187,14 +188,31 @@ const startRelationshipEdit = (node) => {
 
 const tree = createTree(".mainCanvas");
 
-console.log(createNode(tree, "Jim", "Doe", "1.1.1990", undefined));
-console.log(createNode(tree, "Jill", "Doe", "1.1.1992", "1.1.2020"));
+const main = ()=> {
+    console.log(createNode(tree, "Jim", "Doe", "1.1.1990", undefined));
+    console.log(createNode(tree, "Jill", "Doe", "1.1.1992", "1.1.2020"));
 
-console.log(createNode(tree, "Tim", "Doe", "1.1.2015", undefined));
+    console.log(createNode(tree, "Tim", "Doe", "1.1.2015", undefined));
 
-console.log(addRelationship(tree, 0,1, "1.1.2012", "1.1.2020", "⚭"));
+    console.log(addRelationship(tree, 0,1, "1.1.2012", "1.1.2020", "⚭"));
 
 
-addChildren(tree, 0, 2);
+    addChildren(tree, 0, 2);
 
-console.log(reorderTree(tree));
+    console.log(reorderTree(tree));
+}
+
+const imported = (data) => {
+    importTree(data, tree);
+}
+
+document.querySelector(".export").addEventListener("click", () => {
+    console.log(serialize(exportTree(tree)));
+})
+
+const url = new URL(window.location);
+if(url.searchParams.get("data")) {
+    imported(deserialize(url.searchParams.get("data")));
+} else {
+    main();
+}
