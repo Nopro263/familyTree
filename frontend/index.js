@@ -1,4 +1,4 @@
-import { moveAllElements, scale, setPosition } from "./canvas.js";
+import { getPosition, moveAllElements, scale, setPosition } from "./canvas.js";
 import { deserialize, serialize, callbacks } from "./data.js";
 import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree, getRelationshipById } from "./tree.js";
 
@@ -252,8 +252,8 @@ const live = (project) => {
         ws.send(JSON.stringify({
             "type": "moveNode",
             "id": node.id,
-            "x": position[0],
-            "y": position[1]
+            "x": getPosition(node.element)[0],
+            "y": getPosition(node.element)[1]
         }))
     }
 
@@ -261,8 +261,8 @@ const live = (project) => {
         ws.send(JSON.stringify({
             "type": "moveRelationship",
             "id": node.id,
-            "x": position[0],
-            "y": position[1]
+            "x": getPosition(node.element)[0],
+            "y": getPosition(node.element)[1]
         }))
     }
 }

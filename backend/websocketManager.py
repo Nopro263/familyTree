@@ -5,8 +5,8 @@ from datetime import datetime
 from pydantic import BaseModel
 
 class Position(BaseModel):
-    x: int
-    y: int
+    x: float
+    y: float
 
 class Node(BaseModel):
     first_name: str
