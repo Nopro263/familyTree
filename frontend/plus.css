@@ -1,0 +1,57 @@
+.plus {
+    --padding: 0.75em;
+
+    position: relative;
+
+    z-index: 1;
+
+    width: fit-content;
+    height: fit-content;
+}
+
+.plus > svg {
+    display: block;
+    padding: var(--padding);
+
+    background-color: red;
+
+    border-radius: 50%;
+}
+
+.plus > div {
+    position: absolute;
+    left: 0;
+
+    --margin: 0.5em;
+    --error-value: var(--margin) * (1 + 2*2); /* 2 == number of elements in the selector, second 2, amount of mergins per element*/
+    margin: var(--margin);
+
+    top: calc(-1 * var(--error-value));
+
+    z-index: -1;
+
+    width: calc(100% - var(--margin) * 2);
+    height: fit-content;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border: var(--border);
+    border-radius: var(--sharp-corner);
+
+    opacity: 0;
+
+    transition: opacity var(--sharp-duration), top var(--sharp-duration)
+}
+
+.plus > div > * {
+    margin-top: calc(var(--margin));
+    margin-bottom: calc(var(--margin));
+}
+
+.plus:hover > div,
+.plus:has(*:hover) > div {
+    opacity: 1;
+    top: calc(-100% - var(--error-value));
+}

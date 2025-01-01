@@ -1,0 +1,9 @@
+main > aside {
+    translate: calc(-100% - var(--body-margin)) 0;
+
+    transition: translate var(--sharp-duration);
+}
+
+main > aside.open {
+    translate: 0 0;
+}

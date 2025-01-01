@@ -1,0 +1,48 @@
+:root {
+    --sharp-duration: 100ms;
+    --sharp-corner: 5px;
+    --smooth-corner: 10px;
+    --border: 2px solid lightgrey;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    --body-margin: 8px;
+
+    margin: var(--body-margin);
+    width: calc(100% - 2 * var(--body-margin));
+    height: calc(100% - 2 * var(--body-margin));
+
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
+
+    background-color: gray;
+
+    position: relative;
+
+    z-index: 1;
+}
+
+main > aside {
+    width: 20%;
+    height: 100%;
+    background-color: red;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+main > .plus {
+    position: absolute;
+    right: 0.5em;
+    bottom: 0.5em;
+}
