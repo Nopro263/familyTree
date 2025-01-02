@@ -32,11 +32,15 @@ export const createNode = (tree, firstname, lastname, birth, death, id=null) => 
         "element": element
     }
 
+    if(id) {nodeId++;}
+
     callbacks.createElement(element, node);
 
     tree.nodes.push(node);
 
-    callbacks.onCreateNode(node);
+    if(!tree.ignoreCallbacks) {
+        callbacks.onCreateNode(node);
+    }
     return node;
 }
 

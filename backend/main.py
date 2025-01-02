@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import asyncio
 from websocketManager import WebsocketManager, ProjectManager, Position, Node, Relationship, Move, AddChildren
 
@@ -14,8 +14,15 @@ def test() -> str:
 async def websocket(websocket: WebSocket, project: str):
     await manager.accept(websocket, project)
 
-    while True:
-        data = await websocket.receive_json()
+    while True: 
+        try:
+            data = await websocket.receive_json()
+        except WebSocketDisconnect:
+            manager.remove(websocket)
+            return
+        except RuntimeError:
+            manager.remove(websocket)
+            return
 
         print(data)
 
@@ -37,3 +44,6 @@ async def websocket(websocket: WebSocket, project: str):
                         y=data["y"]
                     )
                 ))
+            
+            case "createNode":
+                await manager.on_create_node(websocket, Node.model_validate(data))

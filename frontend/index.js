@@ -225,7 +225,8 @@ const live = (project) => {
     ws.addEventListener("message", (ev) => {
         let raw = JSON.parse(ev.data);
         let data = raw["data"];
-        console.log(data)
+        tree.ignoreCallbacks = true;
+        try {
         switch (raw["type"]) {
             case "moveNode":
                 setPosition(getNodeById(tree, data["id"]).element, [data["position"]["x"], data["position"]["y"]])
@@ -234,9 +235,17 @@ const live = (project) => {
             case "moveRelationship":
                 setPosition(getRelationshipById(tree, data["id"]).element, [data["position"]["x"], data["position"]["y"]])
                 break;
+            
+            case "createNode":
+                createNode(tree, data["first_name"], data["last_name"], data["birth"], data["death"], data["id"])
+                break;
         
             default:
+                console.error(raw);
                 break;
+        }
+        } finally {
+            tree.ignoreCallbacks = false;
         }
     });
 
@@ -265,6 +274,17 @@ const live = (project) => {
             "y": getPosition(node.element)[1]
         }))
     }
+
+    callbacks.onCreateNode = (node) => {
+        ws.send(JSON.stringify({
+            "type": "createNode",
+            "first_name": node.firstname,
+            "last_name": node.lastname,
+            "birth": node.birth,
+            "death": node.death,
+            "id": node.id
+        }))
+    }
 }
 
 document.querySelector(".export").addEventListener("click", () => {
@@ -275,7 +295,7 @@ const url = new URL(window.location);
 if(url.searchParams.get("data")) {
     imported(deserialize(url.searchParams.get("data")));
 } else if(url.searchParams.get("project")) {
-    imported(deserialize("eyJub2RlcyI6W3siZmlyc3RuYW1lIjoiSmltIiwibGFzdG5hbWUiOiJEb2UiLCJiaXJ0aCI6IjE5ODktMTItMzFUMjM6MDA6MDAuMDAwWiIsImRlYXRoIjpudWxsLCJpZCI6MCwiZWxlbWVudCI6WzM1MCwxODRdfSx7ImZpcnN0bmFtZSI6IkppbGwiLCJsYXN0bmFtZSI6IkRvZSIsImJpcnRoIjoiMTk5MS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZGVhdGgiOiIyMDE5LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJpZCI6MSwiZWxlbWVudCI6WzYyNSwxODRdfSx7ImZpcnN0bmFtZSI6IlRpbSIsImxhc3RuYW1lIjoiRG9lIiwiYmlydGgiOiIyMDE0LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJkZWF0aCI6bnVsbCwiaWQiOjIsImVsZW1lbnQiOls3NTYsMzczXX1dLCJyZWxhdGlvbnNoaXBzIjpbeyJub2RlcyI6WzAsMV0sInN0YXJ0IjoiMjAxMS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZW5kIjoiMjAxOS0xMi0zMVQyMzowMDowMC4wMDBaIiwidHlwZSI6IuKarSIsImlkIjowLCJjaGlsZHJlbiI6WzJdLCJlbGVtZW50IjpbNTY2LDIwOF19XX0="));
+    //imported(deserialize("eyJub2RlcyI6W3siZmlyc3RuYW1lIjoiSmltIiwibGFzdG5hbWUiOiJEb2UiLCJiaXJ0aCI6IjE5ODktMTItMzFUMjM6MDA6MDAuMDAwWiIsImRlYXRoIjpudWxsLCJpZCI6MCwiZWxlbWVudCI6WzM1MCwxODRdfSx7ImZpcnN0bmFtZSI6IkppbGwiLCJsYXN0bmFtZSI6IkRvZSIsImJpcnRoIjoiMTk5MS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZGVhdGgiOiIyMDE5LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJpZCI6MSwiZWxlbWVudCI6WzYyNSwxODRdfSx7ImZpcnN0bmFtZSI6IlRpbSIsImxhc3RuYW1lIjoiRG9lIiwiYmlydGgiOiIyMDE0LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJkZWF0aCI6bnVsbCwiaWQiOjIsImVsZW1lbnQiOls3NTYsMzczXX1dLCJyZWxhdGlvbnNoaXBzIjpbeyJub2RlcyI6WzAsMV0sInN0YXJ0IjoiMjAxMS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZW5kIjoiMjAxOS0xMi0zMVQyMzowMDowMC4wMDBaIiwidHlwZSI6IuKarSIsImlkIjowLCJjaGlsZHJlbiI6WzJdLCJlbGVtZW50IjpbNTY2LDIwOF19XX0="));
     live(url.searchParams.get("project"));
 } else {
     main();

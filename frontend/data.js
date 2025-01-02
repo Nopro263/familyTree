@@ -27,8 +27,8 @@ export const callbacks = {
     "onCreateNode": (node) => {},
     "onCreateRealtionship": (nodes) => {},
     "onAddChildren": (relationshipId, childId) => {},
-    "onMoveNode": (nodeId, position) => {},
-    "onMoveRelationship": (relationshipId, position) => {},
+    /**/"onMoveNode": (nodeId, position) => {},
+    /**/"onMoveRelationship": (relationshipId, position) => {},
     "onEditNode": (node) => {},
     "onEditRealtionship": (relationship) => {},
 }

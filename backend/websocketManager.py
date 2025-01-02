@@ -4,6 +4,10 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from typing import TypeVar, Generic
+
+T = TypeVar('T')
+
 class Position(BaseModel):
     x: float
     y: float
@@ -38,18 +42,70 @@ class TypedData(BaseModel):
     type: str
     data: Any
 
+class Positioned(Generic[T]):
+    def __init__(self, position: Position, data: T):
+        self.position = position
+        self.data = data
+
+class Project:
+    def __init__(self):
+        self.nodes: List[Positioned[Node]] = []
+        self.relationships: List[Positioned[Relationship]] = []
+    
+    def get_node(self, id: int) -> Positioned[Node]:
+        for n in self.nodes:
+            if n.data.id == id:
+                return n
+    
+    def get_relationship(self, id: int) -> Positioned[Relationship]:
+        for n in self.relationships:
+            if n.data.id == id:
+                return n
+
+    def get_current_data(self) -> list:
+        actions = []
+        for n in self.nodes:
+            actions.append(TypedData(type="createNode",data=n.data))
+        
+        for n in self.nodes:
+            actions.append(TypedData(type="moveNode",data=Move(id=n.data.id, position=n.position)))
+
+        return actions
+    
+    def move_node(self, move: Move):
+        node = self.get_node(move.id)
+        node.position = move.position
+
+    def move_relationship(self, move: Move):
+        node = self.get_relationship(move.id)
+        node.position = move.position
+    
+    def create_node(self, node: Node):
+        self.nodes.append(Positioned[Node](Position(x=0,y=0), node))
+
 class ProjectManager:
+    def __init__(self):
+        self.projects: Dict[str, Project] = {}
+
     def has_access(self, ws: WebSocket, project: str) -> bool:
         return True
     
     def project_exists(self, project: str) -> bool:
+        if project not in self.projects:
+            self.projects[project] = Project()
         return True
     
-    def get_current_project_data(self, project: str) -> InitialProjectData:
-        return InitialProjectData(
-            nodes=["a"],
-            relationships=["b"]
-        )
+    def get_current_project_data(self, project: str) -> list:
+        return self.projects[project].get_current_data()
+    
+    def on_move_node(self, project: str, data: Move):
+        self.projects[project].move_node(data)
+
+    def on_move_relationship(self, project: str, data: Move):
+        self.projects[project].move_relationship(data)
+    
+    def on_create_node(self, project: str, node: Node):
+        self.projects[project].create_node(node)
 
 
 class WebsocketManager:
@@ -65,7 +121,7 @@ class WebsocketManager:
         if not self.projectManager.has_access(ws, project):
             await self.close_error(ws, "invalid project")
         
-        await self.send(ws, self.projectManager.get_current_project_data(project))
+        await self.send_all(ws, self.projectManager.get_current_project_data(project))
 
         if project not in self.sockets:
             self.sockets[project] = []
@@ -73,19 +129,25 @@ class WebsocketManager:
         self.sockets[project].append(ws)
     
     async def on_move_node(self, origin: WebSocket, data: Move):
+        self.projectManager.on_move_node(self.get_project(origin), data)
         await self.send_to_all(origin, TypedData(
             type="moveNode",
             data=data
             ))
 
     async def on_move_relationship(self, origin: WebSocket, data: Move):
+        self.projectManager.on_move_relationship(self.get_project(origin), data)
         await self.send_to_all(origin, TypedData(
             type="moveRelationship",
             data=data
             ))
 
     async def on_create_node(self, origin: WebSocket, node: Node):
-        pass
+        self.projectManager.on_create_node(self.get_project(origin), node)
+        await self.send_to_all(origin, TypedData(
+            type="createNode",
+            data=node
+            ))
 
     async def on_create_relationship(self, origin: WebSocket, relationship: Relationship):
         pass
@@ -104,6 +166,10 @@ class WebsocketManager:
             if ws is origin:
                 continue
             await self.send(ws, data)
+    
+    async def send_all(self, ws: WebSocket, data: list):
+        for d in data:
+            await self.send(ws, d)
 
     async def close_error(self, ws: WebSocket, message: str):
         await ws.send_text(f"error {message}")
