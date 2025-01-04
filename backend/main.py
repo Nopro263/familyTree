@@ -50,3 +50,6 @@ async def websocket(websocket: WebSocket, project: str):
             
             case "createRelationship":
                 await manager.on_create_relationship(websocket, Relationship.model_validate(data))
+            
+            case "addChildren":
+                await manager.on_add_children(websocket, AddChildren.model_validate(data))

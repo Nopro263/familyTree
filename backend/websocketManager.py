@@ -25,6 +25,7 @@ class Relationship(BaseModel):
     rtype: str
     nodes: List[int]
     id: int
+    children: Optional[List[int]] = None
 
 class Move(BaseModel):
     id: int
@@ -95,6 +96,12 @@ class Project:
         
         self.relationships.append(Positioned[Relationship](pos, relationship))
     
+    def add_children(self, data: AddChildren):
+        r = self.get_relationship(data.relationshipId).data
+        if not r.children:
+            r.children = []
+        r.children.append(data.child)
+    
     def _middle(self, p1: Position, p2: Position) -> Position:
         x = (p1.x + p2.x) / 2
         y = (p1.y + p2.y) / 2 # TODO not a perfect match for positioning
@@ -127,6 +134,9 @@ class ProjectManager:
     
     def on_create_relationship(self, project: str, node: Node):
         self.projects[project].create_relationship(node)
+    
+    def on_add_children(self, project: str, data: AddChildren):
+        self.projects[project].add_children(data)
 
 
 class WebsocketManager:
@@ -178,7 +188,11 @@ class WebsocketManager:
             ))
 
     async def on_add_children(self, origin: WebSocket, data: AddChildren):
-        pass
+        self.projectManager.on_add_children(self.get_project(origin), data)
+        await self.send_to_all(origin, TypedData(
+            type="addChildren",
+            data=data
+            ))
 
     async def on_edit_node(self, origin: WebSocket, node: Node):
         pass

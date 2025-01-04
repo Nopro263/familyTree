@@ -242,6 +242,15 @@ const live = (project) => {
             
             case "createRelationship":
                 addRelationship(tree, data["nodes"][0], data["nodes"][1], data["start"], data["end"], data["rtype"], data["id"])
+                if(data["children"]) {
+                    data["children"].forEach(id => {
+                        addChildren(tree, data["id"], id);
+                    });
+                }
+                break;
+            
+            case "addChildren":
+                addChildren(tree, data["relationshipId"], data["child"]);
                 break;
         
             default:
@@ -299,6 +308,14 @@ const live = (project) => {
             "nodes": r.nodes,
             "id": r.id
         }))
+    }
+
+    callbacks.onAddChildren = (rId, cId) => {
+        ws.send(JSON.stringify({
+            "type": "addChildren",
+            "relationshipId": rId,
+            "child": cId,
+        }));
     }
 }
 
