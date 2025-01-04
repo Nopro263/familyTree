@@ -1,1 +1,1 @@
-screen -dmS tree_backend ./start.sh
+screen -dmS tree_backend ./_start.sh
