@@ -6,5 +6,7 @@ Hover over the plus-sign in the lower-right corner to reveal the two tools to us
 - Connection tool:
   - select the pen and click two people to add a relationship between them
   - select a person and a relationship to add the person as a child in this relation
+
+click the share button on the top-right to share this project with a unique collaboration link
   
 It will also be extended in the future, to allow the selection of subtrees and/or a backend for big trees. (Although this will probably not be in high seas)

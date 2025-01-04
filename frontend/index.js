@@ -252,7 +252,7 @@ const imported = (data) => {
 
 const live = (project) => {
     const wsUrl = new URL(url);
-    wsUrl.port = "8000";
+    wsUrl.port = url.protocol === "http" ? "8000" : url.port;
     wsUrl.pathname = `/api/ws/${project}`;
     wsUrl.search = "";
 

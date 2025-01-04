@@ -1,1 +1,1 @@
-fastapi run main.py --host 0.0.0.0 --port 8000 --root-path /api
+screen -dmS tree_backend ./start.sh
