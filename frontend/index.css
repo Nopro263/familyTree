@@ -157,7 +157,7 @@ main > * {
 
 .element > p {
     margin: 0;
-    color: gray;
+    /*color: gray;*/
 }
 
 .line::after,
@@ -424,8 +424,17 @@ body.delete {
     transform-origin: 50% 50%;
 }
 
+.element:not(.hidden) > p {
+    color: gray;
+}
+
 .hidden {
-    opacity: 0.25;
+    color: rgba(0,0,0,0.25) !important;
+    border-color: rgba(211, 211, 211, 0.25) !important;
+}
+
+.element.hidden > p {
+    color: rgba(128,128,128,0.25) !important
 }
 
 .a {
