@@ -28,13 +28,13 @@ export const initCanvas = (canvas) => {
 
     //svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     svg.setAttribute("width", window.innerWidth);
-    svg.setAttribute("height", window.innerHeight  - document.querySelector("header").offsetHeight - 20);
-    svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + (window.innerHeight  - document.querySelector("header").offsetHeight - 20));
+    svg.setAttribute("height", window.innerHeight  - document.querySelector("header").offsetHeight);
+    svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + (window.innerHeight  - document.querySelector("header").offsetHeight));
 
     addEventListener("resize", (event) => {
         svg.setAttribute("width", window.innerWidth);
-        svg.setAttribute("height", window.innerHeight - document.querySelector("header").offsetHeight - 20);
-        svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + (window.innerHeight - document.querySelector("header").offsetHeight - 20));
+        svg.setAttribute("height", window.innerHeight - document.querySelector("header").offsetHeight);
+        svg.setAttribute("viewBox", "0 0 " + window.innerWidth + " " + (window.innerHeight - document.querySelector("header").offsetHeight));
     });
 
     
