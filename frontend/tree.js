@@ -4,7 +4,7 @@ import { callbacks } from "./data.js";
 let nodeId = 0;
 let relationshipId = 0;
 
-let tree = null;
+export let tree = null;
 
 export const createTree = (selector) => {
     const canvas = document.querySelector(selector);
@@ -62,9 +62,9 @@ export const addRelationship = (tree, node1Id, node2Id, start, end, type, id=nul
         "element": element
     }
 
-    callbacks.createRelationship(element, relationship);
-
     tree.relationships.push(relationship);
+
+    callbacks.createRelationship(element, relationship);
 
     if(!tree.ignoreCallbacks) {
         callbacks.onCreateRealtionship(relationship);

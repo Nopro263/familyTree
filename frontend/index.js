@@ -390,6 +390,8 @@ const live = (project) => {
             "nodes": r.nodes,
             "id": r.id
         }))
+
+        callbacks.onMoveRelationship(r, null); // fix server not knowing where to place the element
     }
 
     callbacks.onAddChildren = (rId, cId) => {

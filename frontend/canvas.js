@@ -1,5 +1,5 @@
 import { callbacks } from "./data.js";
-import { getNodeByHTMLId, getRelationshipByHTMLId } from "./tree.js";
+import { getNodeByHTMLId, getRelationshipByHTMLId, tree } from "./tree.js";
 
 let lastId = 0;
 
@@ -128,6 +128,9 @@ export const connectElements = (canvas, element1, element2) => {
         element.style.top = `${(getVal(element1.style.top) + element1.offsetHeight / 2 + getVal(element2.style.top) + element2.offsetHeight / 2 ) / 2 - element.offsetHeight / 2}px`;
 
         element.dispatchEvent(new DragEvent("dragend"));
+        if(!tree.ignoreCallbacks) {
+            callbacks.onMoveRelationship(getRelationshipByHTMLId(element.id));
+        }
         
         updateOtherPos();
     }
@@ -143,8 +146,10 @@ export const connectElements = (canvas, element1, element2) => {
         line2.setAttribute("x2", getVal(element2.style.left) + element2.offsetWidth / 2);
         line2.setAttribute("y2", getVal(element2.style.top) + element2.offsetHeight / 2);
     }
-    
+    let o = tree.ignoreCallbacks
+    tree.ignoreCallbacks = true;
     updatePos();
+    tree.ignoreCallbacks = o;
 
     element1.addEventListener("dragend", updatePos);
     element2.addEventListener("dragend", updatePos);
