@@ -40,6 +40,7 @@ export const createNode = (tree, firstname, lastname, birth, death, id=null) => 
 
     if(!tree.ignoreCallbacks) {
         callbacks.onCreateNode(node);
+        callbacks.onMoveNode(node, null);
     }
     return node;
 }
