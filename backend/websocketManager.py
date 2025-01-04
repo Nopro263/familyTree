@@ -22,7 +22,7 @@ class Node(BaseModel):
 class Relationship(BaseModel):
     start: Optional[datetime]
     end: Optional[datetime]
-    type: str
+    rtype: str
     nodes: List[int]
     id: int
 
@@ -69,6 +69,12 @@ class Project:
         
         for n in self.nodes:
             actions.append(TypedData(type="moveNode",data=Move(id=n.data.id, position=n.position)))
+        
+        for n in self.relationships:
+            actions.append(TypedData(type="createRelationship",data=n.data))
+        
+        for n in self.relationships:
+            actions.append(TypedData(type="moveRelationship",data=Move(id=n.data.id, position=n.position)))
 
         return actions
     
@@ -82,6 +88,18 @@ class Project:
     
     def create_node(self, node: Node):
         self.nodes.append(Positioned[Node](Position(x=0,y=0), node))
+    
+    def create_relationship(self, relationship: Relationship):
+        pos = self._middle(self.get_node(relationship.nodes[0]).position, 
+                           self.get_node(relationship.nodes[1]).position)
+        
+        self.relationships.append(Positioned[Relationship](pos, relationship))
+    
+    def _middle(self, p1: Position, p2: Position) -> Position:
+        x = (p1.x + p2.x) / 2
+        y = (p1.y + p2.y) / 2 # TODO not a perfect match for positioning
+        print(x,y)
+        return Position(x=x, y=y)
 
 class ProjectManager:
     def __init__(self):
@@ -106,6 +124,9 @@ class ProjectManager:
     
     def on_create_node(self, project: str, node: Node):
         self.projects[project].create_node(node)
+    
+    def on_create_relationship(self, project: str, node: Node):
+        self.projects[project].create_relationship(node)
 
 
 class WebsocketManager:
@@ -150,7 +171,11 @@ class WebsocketManager:
             ))
 
     async def on_create_relationship(self, origin: WebSocket, relationship: Relationship):
-        pass
+        self.projectManager.on_create_relationship(self.get_project(origin), relationship)
+        await self.send_to_all(origin, TypedData(
+            type="createRelationship",
+            data=relationship
+            ))
 
     async def on_add_children(self, origin: WebSocket, data: AddChildren):
         pass

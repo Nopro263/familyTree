@@ -47,3 +47,6 @@ async def websocket(websocket: WebSocket, project: str):
             
             case "createNode":
                 await manager.on_create_node(websocket, Node.model_validate(data))
+            
+            case "createRelationship":
+                await manager.on_create_relationship(websocket, Relationship.model_validate(data))

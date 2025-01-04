@@ -239,6 +239,10 @@ const live = (project) => {
             case "createNode":
                 createNode(tree, data["first_name"], data["last_name"], data["birth"], data["death"], data["id"])
                 break;
+            
+            case "createRelationship":
+                addRelationship(tree, data["nodes"][0], data["nodes"][1], data["start"], data["end"], data["rtype"], data["id"])
+                break;
         
             default:
                 console.error(raw);
@@ -283,6 +287,17 @@ const live = (project) => {
             "birth": node.birth,
             "death": node.death,
             "id": node.id
+        }))
+    }
+
+    callbacks.onCreateRealtionship = (r) => {
+        ws.send(JSON.stringify({
+            "type": "createRelationship",
+            "start": r.start,
+            "end": r.end,
+            "rtype": r.type,
+            "nodes": r.nodes,
+            "id": r.id
         }))
     }
 }

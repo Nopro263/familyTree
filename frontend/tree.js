@@ -65,7 +65,10 @@ export const addRelationship = (tree, node1Id, node2Id, start, end, type, id=nul
 
     tree.relationships.push(relationship);
 
-    callbacks.onCreateRealtionship(relationship);
+    if(!tree.ignoreCallbacks) {
+        callbacks.onCreateRealtionship(relationship);
+    }
+    
     return relationship;
 }
 
@@ -75,7 +78,10 @@ export const addChildren = (tree, relationshipId, nodeId) => {
 
     connectDirect(tree.canvas, relationship.element, getNodeById(tree, nodeId).element);
 
-    callbacks.onAddChildren(relationshipId, nodeId);
+
+    if(!tree.ignoreCallbacks) {
+        callbacks.onAddChildren(relationshipId, nodeId);
+    }
 }
 
 export const reorderTree = (tree) => {
