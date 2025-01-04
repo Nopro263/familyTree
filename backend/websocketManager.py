@@ -62,7 +62,15 @@ class Project:
         for n in self.relationships:
             if n.data.id == id:
                 return n
-
+    
+    def get_relationship_with_node(self, id: int) -> List[Positioned[Relationship]]:
+        r = []
+        for n in self.relationships:
+            if id in n.data.nodes:
+                r.append(n)
+        
+        return r
+    
     def get_current_data(self) -> list:
         actions = []
         for n in self.nodes:
@@ -82,6 +90,11 @@ class Project:
     def move_node(self, move: Move):
         node = self.get_node(move.id)
         node.position = move.position
+
+        for p in self.get_relationship_with_node(move.id):
+            pos = self._middle(self.get_node(p.data.nodes[0]).position, 
+                               self.get_node(p.data.nodes[1]).position)
+            p.position = pos
 
     def move_relationship(self, move: Move):
         node = self.get_relationship(move.id)
@@ -105,7 +118,6 @@ class Project:
     def _middle(self, p1: Position, p2: Position) -> Position:
         x = (p1.x + p2.x) / 2
         y = (p1.y + p2.y) / 2 # TODO not a perfect match for positioning
-        print(x,y)
         return Position(x=x, y=y)
 
 class ProjectManager:
