@@ -190,9 +190,49 @@ const startRelationshipEdit = (node) => {
     });
 }
 
+function uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+    );
+  }
+
+document.querySelector(".svg").addEventListener("click", () => {
+    share(uuidv4());
+})
+
 const tree = createTree(".mainCanvas");
 
-const main = ()=> {
+const share = (name) => {
+    live(name);
+    callbacks.onWsReady = () => {
+        tree.nodes.forEach(n => {
+            callbacks.onCreateNode(n);
+        });
+        tree.relationships.forEach(n => {
+            callbacks.onCreateRealtionship(n);
+        });
+    
+        tree.nodes.forEach(n => {
+            callbacks.onMoveNode(n, null);
+        });
+        tree.relationships.forEach(n => {
+            callbacks.onMoveRelationship(n, null);
+        });
+
+        tree.relationships.forEach(n => {
+            n.children.forEach(c => {
+                callbacks.onAddChildren(n.id, c);
+            });
+        });
+
+        let u = new URL(window.location);
+        u.search = `?project=${name}`;
+        navigator.clipboard.writeText(u.toString())
+        window.location.search = `?project=${name}`;
+    }
+}
+
+const main = () => {
     console.log(createNode(tree, "Jim", "Doe", "1.1.1990", undefined));
     console.log(createNode(tree, "Jill", "Doe", "1.1.1992", "1.1.2020"));
 
@@ -220,6 +260,7 @@ const live = (project) => {
 
     ws.addEventListener("open", (ev) => {
         console.log("open", ev);
+        callbacks.onWsReady();
     });
 
     ws.addEventListener("message", (ev) => {
@@ -362,15 +403,10 @@ const live = (project) => {
     }
 }
 
-document.querySelector(".export").addEventListener("click", () => {
-    console.log(serialize(exportTree(tree)));
-})
-
 const url = new URL(window.location);
 if(url.searchParams.get("data")) {
     imported(deserialize(url.searchParams.get("data")));
 } else if(url.searchParams.get("project")) {
-    //imported(deserialize("eyJub2RlcyI6W3siZmlyc3RuYW1lIjoiSmltIiwibGFzdG5hbWUiOiJEb2UiLCJiaXJ0aCI6IjE5ODktMTItMzFUMjM6MDA6MDAuMDAwWiIsImRlYXRoIjpudWxsLCJpZCI6MCwiZWxlbWVudCI6WzM1MCwxODRdfSx7ImZpcnN0bmFtZSI6IkppbGwiLCJsYXN0bmFtZSI6IkRvZSIsImJpcnRoIjoiMTk5MS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZGVhdGgiOiIyMDE5LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJpZCI6MSwiZWxlbWVudCI6WzYyNSwxODRdfSx7ImZpcnN0bmFtZSI6IlRpbSIsImxhc3RuYW1lIjoiRG9lIiwiYmlydGgiOiIyMDE0LTEyLTMxVDIzOjAwOjAwLjAwMFoiLCJkZWF0aCI6bnVsbCwiaWQiOjIsImVsZW1lbnQiOls3NTYsMzczXX1dLCJyZWxhdGlvbnNoaXBzIjpbeyJub2RlcyI6WzAsMV0sInN0YXJ0IjoiMjAxMS0xMi0zMVQyMzowMDowMC4wMDBaIiwiZW5kIjoiMjAxOS0xMi0zMVQyMzowMDowMC4wMDBaIiwidHlwZSI6IuKarSIsImlkIjowLCJjaGlsZHJlbiI6WzJdLCJlbGVtZW50IjpbNTY2LDIwOF19XX0="));
     live(url.searchParams.get("project"));
 } else {
     main();

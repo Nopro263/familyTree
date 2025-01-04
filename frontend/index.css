@@ -18,6 +18,37 @@ main {
     position: relative;
 }
 
+header {
+    display: flex;
+}
+
+header > .svg {
+    margin-right: 20px;
+    margin-top: 12px;
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+}
+
+header > .svg::before {
+    display: block;
+    position: absolute;
+    left: -4px;
+    top: -5px;
+    content: "";
+    z-index: -1;
+    width: 26px;
+    height: 26px;
+
+    border-radius: 50%;
+
+    transition: background-color 100ms;
+}
+
+header > .svg:hover::before {
+    background-color: var(--lightblue);
+}
+
 main > * {
     position: absolute;
     left: 0;
