@@ -115,6 +115,21 @@ class Project:
             r.children = []
         r.children.append(data.child)
     
+    def on_edit_relationship(self, relationship: Relationship):
+        data = self.get_relationship(relationship.id).data
+
+        data.start = relationship.start
+        data.end = relationship.end
+        data.rtype = relationship.rtype
+
+    def on_edit_node(self, node: Node):
+        data = self.get_node(node.id).data
+
+        data.birth = node.birth
+        data.death = node.death
+        data.first_name = node.first_name
+        data.last_name = node.last_name
+    
     def _middle(self, p1: Position, p2: Position) -> Position:
         x = (p1.x + p2.x) / 2
         y = (p1.y + p2.y) / 2 # TODO not a perfect match for positioning
@@ -144,11 +159,17 @@ class ProjectManager:
     def on_create_node(self, project: str, node: Node):
         self.projects[project].create_node(node)
     
-    def on_create_relationship(self, project: str, node: Node):
+    def on_create_relationship(self, project: str, node: Relationship):
         self.projects[project].create_relationship(node)
     
     def on_add_children(self, project: str, data: AddChildren):
         self.projects[project].add_children(data)
+    
+    def on_edit_relationship(self, project: str, relationship: Relationship):
+        self.projects[project].on_edit_relationship(relationship)
+    
+    def on_edit_node(self, project: str, node: Node):
+        self.projects[project].on_edit_node(node)
 
 
 class WebsocketManager:
@@ -207,10 +228,18 @@ class WebsocketManager:
             ))
 
     async def on_edit_node(self, origin: WebSocket, node: Node):
-        pass
+        self.projectManager.on_edit_node(self.get_project(origin), node)
+        await self.send_to_all(origin, TypedData(
+            type="editNode",
+            data=node
+            ))
 
     async def on_edit_relationship(self, origin: WebSocket, relationship: Relationship):
-        pass
+        self.projectManager.on_edit_relationship(self.get_project(origin), relationship)
+        await self.send_to_all(origin, TypedData(
+            type="editRelationship",
+            data=relationship
+            ))
 
     async def send_to_all(self, origin: WebSocket, data: Any):
         for ws in self.sockets[self.get_project(origin)]:

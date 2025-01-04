@@ -252,6 +252,27 @@ const live = (project) => {
             case "addChildren":
                 addChildren(tree, data["relationshipId"], data["child"]);
                 break;
+            
+            case "editNode":
+                const node = getNodeById(tree, data["id"]);
+                node.birth = data["birth"] ? new Date(data["birth"]) : null;
+                node.death = data["death"] ? new Date(data["death"]) : null;
+                node.firstname = data["first_name"];
+                node.lastname = data["last_name"];
+                node.element.removeEventListener("click", node.l || null);
+                callbacks.createElement(node.element, node);
+                break;
+            
+            case "editRelationship":
+                const r = getRelationshipById(tree, data["id"]);
+                r.start = data["start"] ? new Date(data["start"]) : null;
+                r.end = data["end"] ? new Date(data["end"]) : null;
+                r.type = data["rtype"];
+
+                r.element.removeEventListener("click", r.l || null);
+
+                callbacks.createRelationship(r.element, r);
+                break;
         
             default:
                 console.error(raw);
@@ -316,6 +337,28 @@ const live = (project) => {
             "relationshipId": rId,
             "child": cId,
         }));
+    }
+
+    callbacks.onEditNode = (node) => {
+        ws.send(JSON.stringify({
+            "type": "editNode",
+            "first_name": node.firstname,
+            "last_name": node.lastname,
+            "birth": node.birth,
+            "death": node.death,
+            "id": node.id
+        }))
+    }
+
+    callbacks.onEditRealtionship = (r) => {
+        ws.send(JSON.stringify({
+            "type": "editRelationship",
+            "start": r.start,
+            "end": r.end,
+            "rtype": r.type,
+            "nodes": r.nodes,
+            "id": r.id
+        }))
     }
 }
 
