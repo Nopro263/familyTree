@@ -71,6 +71,14 @@ class Project:
         
         return r
     
+    def get_relationship_with_node_as_child(self, id: int) -> List[Positioned[Relationship]]:
+        r = []
+        for n in self.relationships:
+            if id in n.data.children:
+                r.append(n)
+        
+        return r
+    
     def get_current_data(self) -> list:
         actions = []
         for n in self.nodes:
@@ -130,6 +138,16 @@ class Project:
         data.first_name = node.first_name
         data.last_name = node.last_name
     
+    def on_delete_node(self, nodeId: int):
+        for r in self.get_relationship_with_node(nodeId):
+            self.on_delete_relationship(r.data.id)
+        for r in self.get_relationship_with_node_as_child(nodeId):
+            r.data.children.remove(nodeId)
+        self.nodes.remove(self.get_node(nodeId))
+    
+    def on_delete_relationship(self, rId: int):
+        self.relationships.remove(self.get_relationship(rId))
+    
     def _middle(self, p1: Position, p2: Position) -> Position:
         x = (p1.x + p2.x) / 2
         y = (p1.y + p2.y) / 2 # TODO not a perfect match for positioning
@@ -170,6 +188,12 @@ class ProjectManager:
     
     def on_edit_node(self, project: str, node: Node):
         self.projects[project].on_edit_node(node)
+
+    def on_delete_node(self, project: str, node: int):
+        self.projects[project].on_delete_node(node)
+    
+    def on_delete_relationship(self, project: str, r: int):
+        self.projects[project].on_delete_relationship(r)
 
 
 class WebsocketManager:
@@ -239,6 +263,20 @@ class WebsocketManager:
         await self.send_to_all(origin, TypedData(
             type="editRelationship",
             data=relationship
+            ))
+    
+    async def on_delete_node(self, origin: WebSocket, node: int):
+        self.projectManager.on_delete_node(self.get_project(origin), node)
+        await self.send_to_all(origin, TypedData(
+            type="deleteNode",
+            data=node
+            ))
+    
+    async def on_delete_relationship(self, origin: WebSocket, r: int):
+        self.projectManager.on_delete_relationship(self.get_project(origin), r)
+        await self.send_to_all(origin, TypedData(
+            type="deleteRelationship",
+            data=r
             ))
 
     async def send_to_all(self, origin: WebSocket, data: Any):

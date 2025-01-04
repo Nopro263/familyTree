@@ -305,7 +305,8 @@ export const importTree = (exportedTree, tree) => {
     });
 }
 
-export const deleteNode = (tree, node) => {
+export const deleteNode = (tree, node, re=true) => {
+    if(!node) return;
     const relationships = getRelationshipsWithNodeId(tree, node.id);
     const parents = getRelationshipsWithNodeIdAsChild(tree, node.id);
 
@@ -314,15 +315,26 @@ export const deleteNode = (tree, node) => {
     });
 
     relationships.forEach(r => {
-        deleteRelationship(tree, r);
+        if(re) {
+            deleteRelationship(tree, r);
+        }
     });
 
     tree.nodes = tree.nodes.filter(n => n.id !== node.id);
 
     removeElement(tree.canvas, node.element);
+
+    if(!tree.ignoreCallbacks) {
+        callbacks.onDeleteNode(node.id);
+    }
 }
 
 export const deleteRelationship = (tree, relationship) => {
+    if(!relationship) return;
     removeElement(tree.canvas, relationship.element);
     tree.relationships = tree.relationships.filter(r => r.id !== relationship.id);
+
+    if(!tree.ignoreCallbacks) {
+        callbacks.onDeleteRelationship(relationship.id);
+    }
 }

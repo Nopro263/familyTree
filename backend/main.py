@@ -59,3 +59,9 @@ async def websocket(websocket: WebSocket, project: str):
             
             case "editRelationship":
                 await manager.on_edit_relationship(websocket, Relationship.model_validate(data))
+            
+            case "deleteNode":
+                await manager.on_delete_node(websocket, data["id"])
+            
+            case "deleteRelationship":
+                await manager.on_delete_relationship(websocket, data["id"])

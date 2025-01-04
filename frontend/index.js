@@ -326,6 +326,14 @@ const live = (project) => {
 
                 callbacks.createRelationship(r.element, r);
                 break;
+            
+            case "deleteNode":
+                deleteNode(tree, getNodeById(tree, data), false);
+                break;
+            
+            case "deleteRelationship":
+                deleteRelationship(tree, getRelationshipById(tree, data));
+                break;
         
             default:
                 console.error(raw);
@@ -411,6 +419,20 @@ const live = (project) => {
             "rtype": r.type,
             "nodes": r.nodes,
             "id": r.id
+        }))
+    }
+
+    callbacks.onDeleteNode = (n) => {
+        ws.send(JSON.stringify({
+            "type": "deleteNode",
+            "id": n
+        }))
+    }
+
+    callbacks.onDeleteRelationship = (r) => {
+        ws.send(JSON.stringify({
+            "type": "deleteRelationship",
+            "id": r
         }))
     }
 }
