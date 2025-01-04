@@ -1,6 +1,6 @@
 import { getPosition, moveAllElements, scale, setPosition } from "./canvas.js";
 import { deserialize, serialize, callbacks } from "./data.js";
-import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree, getRelationshipById, deleteNode } from "./tree.js";
+import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree, getRelationshipById, deleteNode, deleteRelationship } from "./tree.js";
 
 let connectNodes = [];
 
@@ -98,6 +98,7 @@ callbacks.createElement = (element, node) => {
             addNode(node);
         } else if(document.body.classList.contains("delete")) {
             deleteNode(tree, node);
+            document.body.classList.remove("delete");
         } else {
             startEdit(node);
             element.classList.add("active");
@@ -126,7 +127,8 @@ callbacks.createRelationship = (element, relationship) => {
         if(document.body.classList.contains("line_connect")) {
             addNode(relationship);
         } else if(document.body.classList.contains("delete")) {
-            
+            deleteRelationship(tree, relationship);
+            document.body.classList.remove("delete");
         } else {
             startRelationshipEdit(relationship);
             element.classList.add("active");

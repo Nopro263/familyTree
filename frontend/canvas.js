@@ -150,6 +150,12 @@ export const connectElements = (canvas, element1, element2) => {
     element2.addEventListener("dragend", updatePos);
     element.addEventListener("dragend", updateOtherPos);
 
+    if(!element.lines) {
+        element.lines = [];
+    }
+
+    element.lines.push({line1, line2, updatePos, element1, element2});
+
     line1.setAttribute("stroke", "#5cceee");
     line2.setAttribute("stroke", "#5cceee");
 
@@ -243,4 +249,16 @@ export const removeElement = (canvas, element) => {
             line.element.removeEventListener("dragend", line.updatePos);
         });
     }
+
+    if(element.lines) {
+        element.lines.forEach(line => {
+            canvas.querySelector("svg").removeChild(line.line1);
+            canvas.querySelector("svg").removeChild(line.line2);
+
+            line.element1.removeEventListener("dragend", line.updatePos);
+            line.element2.removeEventListener("dragend", line.updatePos);
+        })
+    }
+
+    element.parentElement.removeChild(element);
 }

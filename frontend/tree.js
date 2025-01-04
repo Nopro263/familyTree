@@ -316,8 +316,13 @@ export const deleteNode = (tree, node) => {
     relationships.forEach(r => {
         deleteRelationship(tree, r);
     });
+
+    tree.nodes = tree.nodes.filter(n => n.id !== node.id);
+
+    removeElement(tree.canvas, node.element);
 }
 
 export const deleteRelationship = (tree, relationship) => {
     removeElement(tree.canvas, relationship.element);
-} 
+    tree.relationships = tree.relationships.filter(r => r.id !== relationship.id);
+}
