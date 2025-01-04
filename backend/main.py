@@ -24,7 +24,7 @@ async def websocket(websocket: WebSocket, project: str):
             manager.remove(websocket)
             return
 
-        print(data)
+        print(project, data)
 
         match data["type"]:
             case "moveNode":
