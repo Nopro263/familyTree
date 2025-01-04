@@ -1,4 +1,4 @@
-import { connectElements, createElement, initCanvas, connectDirect, setPosition, getPosition } from "./canvas.js";
+import { connectElements, createElement, initCanvas, connectDirect, setPosition, getPosition, removeElement } from "./canvas.js";
 import { callbacks } from "./data.js";
 
 let nodeId = 0;
@@ -304,3 +304,20 @@ export const importTree = (exportedTree, tree) => {
         });
     });
 }
+
+export const deleteNode = (tree, node) => {
+    const relationships = getRelationshipsWithNodeId(tree, node.id);
+    const parents = getRelationshipsWithNodeIdAsChild(tree, node.id);
+
+    parents.forEach(r => {
+        r.children = r.children.filter(v => v !== node.id);
+    });
+
+    relationships.forEach(r => {
+        deleteRelationship(tree, r);
+    });
+}
+
+export const deleteRelationship = (tree, relationship) => {
+    removeElement(tree.canvas, relationship.element);
+} 

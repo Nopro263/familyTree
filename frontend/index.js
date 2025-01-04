@@ -1,6 +1,6 @@
 import { getPosition, moveAllElements, scale, setPosition } from "./canvas.js";
 import { deserialize, serialize, callbacks } from "./data.js";
-import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree, getRelationshipById } from "./tree.js";
+import { createTree, createNode, addChildren, addRelationship, getNodeById, reorderTree, getExtramas, onlyShowNodes, exportTree, importTree, getRelationshipById, deleteNode } from "./tree.js";
 
 let connectNodes = [];
 
@@ -24,11 +24,17 @@ document.querySelector(".arrow").addEventListener("click", () => {
 });
 
 document.querySelector(".hoverelements > *:nth-child(1)").addEventListener("click", () => {
-    document.body.classList.add("line_connect");
-    connectNodes = [];
+    document.body.classList.remove("line_connect");
+    document.body.classList.add("delete");
 });
 
 document.querySelector(".hoverelements > *:nth-child(2)").addEventListener("click", () => {
+    document.body.classList.add("line_connect");
+    document.body.classList.remove("delete");
+    connectNodes = [];
+});
+
+document.querySelector(".hoverelements > *:nth-child(3)").addEventListener("click", () => {
     const node = createNode(tree, "John", "Doe", "1.1.1990", undefined);
     startEdit(node);
     node.element.classList.add("active");
@@ -90,6 +96,8 @@ callbacks.createElement = (element, node) => {
     const l = () => {
         if(document.body.classList.contains("line_connect")) {
             addNode(node);
+        } else if(document.body.classList.contains("delete")) {
+            deleteNode(tree, node);
         } else {
             startEdit(node);
             element.classList.add("active");
@@ -117,6 +125,8 @@ callbacks.createRelationship = (element, relationship) => {
     element.addEventListener("click", () => {
         if(document.body.classList.contains("line_connect")) {
             addNode(relationship);
+        } else if(document.body.classList.contains("delete")) {
+            
         } else {
             startRelationshipEdit(relationship);
             element.classList.add("active");
@@ -252,7 +262,7 @@ const imported = (data) => {
 
 const live = (project) => {
     const wsUrl = new URL(url);
-    wsUrl.port = url.protocol === "http" ? "8000" : url.port;
+    wsUrl.port = url.protocol === "http:" ? "8000" : url.port;
     wsUrl.pathname = `/api/ws/${project}`;
     wsUrl.search = "";
 

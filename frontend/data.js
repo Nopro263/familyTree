@@ -31,6 +31,8 @@ export const callbacks = {
     "onMoveRelationship": (relationship, position) => {},
     "onEditNode": (node) => {},
     "onEditRealtionship": (relationship) => {},
+    "onDeleteNode": (nodeId) => {},
+    "onDeleteRelationship": (relationshipId) => {},
 
     "onWsReady": () => {},
 }

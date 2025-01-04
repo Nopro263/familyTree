@@ -168,6 +168,13 @@ export const connectDirect = (canvas, element1, element2) => {
 
     let line = document.createElementNS(svgns, "line");
 
+    if(!element1.dlines) {
+        element1.dlines = [];
+    }
+    if(!element2.dlines) {
+        element2.dlines = [];
+    }
+
     const updatePos = () => {
         line.setAttribute("x1", getVal(element1.style.left) + element1.offsetWidth / 2);
         line.setAttribute("y1", getVal(element1.style.top) + element1.offsetHeight / 2);
@@ -179,6 +186,9 @@ export const connectDirect = (canvas, element1, element2) => {
 
     element1.addEventListener("dragend", updatePos);
     element2.addEventListener("dragend", updatePos);
+
+    element1.dlines.push({line, updatePos, "element": element2});
+    element2.dlines.push({line, updatePos, "element": element1});
 
     line.setAttribute("stroke", "#5cceee");
 
@@ -223,5 +233,14 @@ export const moveAllElements = (canvas, delta) => {
 
         const position = getPosition(element);
         setPosition(element, [position[0] + delta[0] , position[1] + delta[1]]);
+    }
+}
+
+export const removeElement = (canvas, element) => {
+    if(element.dlines) {
+        element.dlines.forEach(line => {
+            canvas.querySelector("svg").removeChild(line.line);
+            line.element.removeEventListener("dragend", line.updatePos);
+        });
     }
 }

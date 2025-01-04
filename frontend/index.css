@@ -378,7 +378,8 @@ input:disabled {
     opacity: 0;
 }
 
-body.line_connect {
+body.line_connect,
+body.delete {
     cursor: crosshair;
 }
 
