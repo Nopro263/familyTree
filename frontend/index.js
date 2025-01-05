@@ -274,10 +274,13 @@ const live = (project) => {
     const ws = new WebSocket(wsUrl);
 
     document.querySelector(".svg").classList.add("o");
+    document.querySelector(".svg").classList.add("online");
+    document.querySelector(".svg").classList.add("error");
 
     ws.addEventListener("open", (ev) => {
         console.log("open", ev);
         document.querySelector(".svg").classList.add("online");
+        document.querySelector(".svg").classList.remove("error");
         callbacks.onWsReady();
     });
 
