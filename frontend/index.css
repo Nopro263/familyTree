@@ -442,3 +442,22 @@ body.delete {
     font-weight: lighter;
     font-size: smaller;
 }
+
+.online::before {
+    animation: online 500ms ease-in 0ms infinite;
+    animation-direction: alternate;
+}
+
+.error {
+    --c: red;
+}
+
+@keyframes online {
+    0% {
+        background-color: transparent;
+    }
+
+    100% {
+        background-color: var(--c, var(--blue));
+    }
+}

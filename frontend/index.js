@@ -209,6 +209,9 @@ function uuidv4() {
   }
 
 document.querySelector(".svg").addEventListener("click", () => {
+    if(document.querySelector(".svg").classList.contains("o")) {
+        return;
+    }
     share(uuidv4());
 })
 
@@ -270,8 +273,11 @@ const live = (project) => {
 
     const ws = new WebSocket(wsUrl);
 
+    document.querySelector(".svg").classList.add("o");
+
     ws.addEventListener("open", (ev) => {
         console.log("open", ev);
+        document.querySelector(".svg").classList.add("online");
         callbacks.onWsReady();
     });
 
@@ -350,6 +356,7 @@ const live = (project) => {
 
     ws.addEventListener("close", (ev) => {
         console.log("close", ev);
+        document.querySelector(".svg").classList.add("error");
     });
 
     callbacks.onMoveNode = (node, position) => {
